@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- ... your existing head content ... -->
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/flash-messages') %>
+    <%- include('./partials/header') %>
+    <%- include('./partials/navbar') %>
+
+    <div class="container">
+        <!-- Login form content -->
+    </div>
+
+    <%- include('./partials/footer') %>
+</body>
+</html> 

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <%- include('./partials/flash-messages') %>
+
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4 flex justify-between items-center">
+        <div class="text-xl font-bold">MyApp</div>
+        <!-- <div>
+            <a href="/api/user/login" class="text-blue-400 hover:text-blue-300">Already have an account? Login</a>
+        </div> -->
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-md mx-auto bg-gray-800 rounded-lg shadow-xl p-8">
+            <h1 class="text-2xl font-bold mb-6 text-center">Create Account</h1>
+            
+            <form action="/api/user/register" method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2" for="name">Full Name</label>
+                    <input 
+                        class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        placeholder="Enter your full name"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2" for="userName">Username</label>
+                    <input 
+                        class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        id="userName"
+                        name="userName"
+                        required
+                        placeholder="Choose a username"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2" for="email">Email Address</label>
+                    <input 
+                        class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="Enter your email"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2" for="phone">Phone Number</label>
+                    <input 
+                        class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        required
+                        placeholder="Enter your phone number"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2" for="password">Password</label>
+                    <input 
+                        class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        placeholder="Create a password"
+                        minlength="6"
+                    >
+                    <p class="text-xs text-gray-400 mt-1">Password must be at least 6 characters long</p>
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+                >
+                    Create Account
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm text-gray-400">
+                Already have an account? 
+                <a href="/api/user/login" class="text-blue-400 hover:text-blue-300">Login here</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

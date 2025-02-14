@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User List</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex bg-gray-100 min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 text-white min-h-screen p-5 space-y-6 shadow-xl">
+    <h2 class="text-3xl font-extrabold text-center mb-6">Admin Panel</h2>
+    <nav class="space-y-4">
+      <a href="/api/admin/dashboard" class="block px-5 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 flex items-center">🏠 Dashboard</a>
+      <a href="" class="block px-5 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 flex items-center">👥 User List</a>
+      <a href="/api/admin/logout" class="block px-5 py-3 rounded-lg bg-red-600 hover:bg-red-700 transition duration-300 text-white flex items-center">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8 bg-white shadow-lg rounded-lg m-6">
+    <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">User List</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse bg-gray-50 rounded-lg overflow-hidden shadow-lg">
+        <thead>
+          <tr class="bg-gray-300 text-gray-700">
+            <th class="p-4 text-left font-semibold">Name</th>
+            <th class="p-4 text-left font-semibold">Email</th>
+            <!-- <th class="p-4 text-center font-semibold">Action</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="h-4"></tr> <!-- Added gap between thead and tbody -->
+          <% users.forEach(user => { %>
+            <tr class="border-t hover:bg-gray-100 transition duration-200 border border-gray-300">
+              <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.name %></td>
+              <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.email %></td>
+              <td class="p-4 text-center border border-gray-300">
+                <a href="/api/user/user/<%= user._id %>" class="text-white bg-blue-500 hover:bg-blue-700 transition duration-300 px-5 py-2 rounded-full shadow-md">View</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

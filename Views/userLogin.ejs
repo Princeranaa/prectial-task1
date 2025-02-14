@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white">
+  <%- include('./partials/flash-messages') %>
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 flex justify-between items-center">
+    <div class="text-xl font-bold">MyApp</div>
+    <!-- <div>
+      <% if (user) { %>
+        <div class="flex gap-2">
+          <div class="">👋🏻</div>
+          <div class="font-semibold ">
+            Welcome Back, <%= user.name %>
+          </div>
+        </div>
+        <!-- <a href="/logout" class="bg-red-500 px-4 py-2 rounded">Logout</a> -->
+      <% } else { %>
+        <!-- <a href="/api/user" class="text-blue-400 hover:text-blue-300">Don't have an account? Register</a> -->
+      <% } %>
+    <!-- </div>  -->
+  </nav>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-gray-800 rounded-lg shadow-xl p-8">
+      <h1 class="text-2xl font-bold mb-6 text-center">Welcome Back</h1>
+      
+      <form action="/api/user/login" method="POST" class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium mb-2" for="email">Email Address</label>
+          <input 
+            class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="Enter your email"
+          >
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2" for="password">Password</label>
+          <input 
+            class="w-full px-3 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="Enter your password"
+          >
+        </div>
+
+        <!-- <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center">
+            <input type="checkbox" id="remember" class="rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500">
+            <label for="remember" class="ml-2 text-gray-300">Remember me</label>
+          </div>
+          <a href="#" class="text-blue-400 hover:text-blue-300">Forgot password?</a>
+        </div> -->
+
+        <button 
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <div class="mt-6 text-center text-sm text-gray-400">
+        Don't have an account? 
+        <a href="/api/user" class="text-blue-400 hover:text-blue-300">Create an account</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional: Social Login Buttons -->
+  <div class="container mx-auto px-4 mt-4">
+    <div class="max-w-md mx-auto">
+      <div class="relative my-4">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-700"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-gray-900 text-gray-400">Or continue with</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <button class="flex items-center justify-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-300">
+          <i class="fab fa-google text-xl mr-2"></i>
+          Google
+        </button>
+        <button class="flex items-center justify-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-300">
+          <i class="fab fa-facebook text-xl mr-2"></i>
+          Facebook
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

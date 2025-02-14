@@ -1,0 +1,27 @@
+<% if (typeof messages !== 'undefined' && (messages.error?.length > 0 || messages.success?.length > 0)) { %>
+    <div id="flash-message" class="fixed top-4 right-4 z-50 animate-fade-in">
+        <% if (messages.error?.length > 0) { %>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md">
+                <%= messages.error %>
+            </div>
+        <% } %>
+        <% if (messages.success?.length > 0) { %>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
+                <%= messages.success %>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            const flashMessage = document.getElementById('flash-message');
+            if (flashMessage) {
+                flashMessage.style.transition = 'opacity 0.5s ease';
+                flashMessage.style.opacity = '0';
+                setTimeout(() => {
+                    flashMessage.remove();
+                }, 500);
+            }
+        }, 3000); // Message will stay for 3 seconds
+    </script>
+<% } %> 

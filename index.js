@@ -18,10 +18,10 @@ app.use(
     secret: process.env.MY_SECRET_KEY || 'your-fallback-secret-key',
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
+    // cookie: {
+    //     secure: process.env.NODE_ENV === 'production',
+    //     maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    // }
   })
 );
 app.use(flash());

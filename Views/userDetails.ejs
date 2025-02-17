@@ -7,23 +7,18 @@
 </head>
 <body class="bg-gray-50">
     <div class="container mx-auto p-6">
-        <!-- Main content wrapper with flex and justify-between -->
         <div class="flex justify-between gap-8">
-            <!-- Section 1: Profile and Wallet (Left Side) -->
             <div class="w-[400px] border border-black">
-                <!-- Profile Section -->
                 <div class="bg-white rounded-lg p-6 mb-6">
                     <div class="flex flex-col items-center">
                         <div class="w-32 h-32 bg-gray-200 rounded-full mb-4">
                             <img src="https://images.unsplash.com/photo-1581382575275-97901c2635b7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bWFufGVufDB8fDB8fHww" 
-                                 alt="Profile" 
-                                 class="w-full h-full rounded-full object-cover">
+                                alt="Profile" class="w-full h-full rounded-full object-cover">
                         </div>
                         <h2 class="text-xl text-gray-600 mb-4"><%= user.userName || 'Cashuser010' %></h2>
                     </div>
                 </div>
 
-                <!-- Wallet Section -->
                 <div class="bg-white rounded-lg p-6 mb-6">
                     <div class="flex items-center mb-4">
                         <i class="fas fa-wallet text-green-500 text-2xl mr-3"></i>
@@ -48,13 +43,12 @@
                         <button class="w-full bg-green-400 text-white py-2 rounded hover:bg-green-500">
                             Update Balance
                         </button>
-                        <button class="w-full bg-purple-700 text-white py-2 rounded hover:bg-purple-800">
+                        <button id="openModalBtn" class="w-full bg-purple-700 text-white py-2 rounded hover:bg-purple-800">
                             Change Password
                         </button>
                     </div>
                 </div>
-
-                <!-- Current Status -->
+                
                 <div class="bg-white rounded-lg p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-gray-600">Current Status</h3>
@@ -67,76 +61,69 @@
                         </div>
                         <div>
                             <div class="text-sm">Last Login Date</div>
-                            <div><%= user.lastLoginDate || '2025-01-12 21:05:19' %></div>
+                            <div><%= user.lastLoginDate || 'N/A' %></div>
                         </div>
-                        <div>No</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Section 2: User Details (Right Side) -->
-            <div class="flex-1">
-                <!-- Navigation Tabs -->
-                <div class="mb-8 border-b">
-                    <nav class="flex space-x-8">
-                        <a href="#" class="text-red-500 border-b-2 border-red-500 pb-4" aria-current="page">User Details</a>
-                        <a href="#" class="text-gray-500 hover:text-red-500 hover:border-b-2 hover:border-red-500 pb-4">Games History Counts</a>
-                        <a href="#" class="text-gray-500 hover:text-red-500 hover:border-b-2 hover:border-red-500 pb-4">Wallet History</a>
-                        <a href="#" class="text-gray-500 hover:text-red-500 hover:border-b-2 hover:border-red-500 pb-4">Game Played List</a>
-                        <a href="#" class="text-gray-500 hover:text-red-500 hover:border-b-2 hover:border-red-500 pb-4">Transactions</a>
-                    </nav>
-                </div>
-
-                <!-- Personal Details -->
-                <div class="bg-white rounded-lg p-6">
-                    <h3 class="text-xl text-gray-700 mb-6">Personal Details</h3>
-                    <div class="space-y-4">
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">User ID</span>
-                            <span class="w-2/3"><%= user.id || '118' %></span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">User Name</span>
-                            <span class="w-2/3"><%= user.userName || 'Cashuser010' %></span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">Full Name</span>
-                            <span class="w-2/3"><%= user.name || 'Cashuser010' %></span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">Email</span>
-                            <span class="w-2/3"><%= user.email || '-' %></span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">Phone</span>
-                            <span class="w-2/3"><%= user.phone || '-' %></span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">Status</span>
-                            <span class="w-2/3 text-green-500">Active</span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">Registered Date</span>
-                            <span class="w-2/3"><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : '2025-01-12 21:05:19' %></span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">Registered From Device ID</span>
-                            <span class="w-2/3">-</span>
-                        </div>
-                        <div class="flex border-b py-3">
-                            <span class="w-1/3 text-gray-500">Last Login Date</span>
-                            <span class="w-2/3"><%= user.lastLoginDate || '2025-01-12 21:05:19' %></span>
-                        </div>
-                    </div>
-
-                    <!-- Device Details -->
-                    <!-- <div class="mt-8">
-                        <h4 class="text-lg font-medium text-gray-700 mb-4">User current login mobile device details</h4>
-                        <p class="text-red-500">User currently not logged in into any device!</p>
-                    </div> -->
+            
+            <div class="flex-1 bg-white rounded-lg p-6">
+                <h3 class="text-xl text-gray-700 mb-6">Personal Details</h3>
+                <div class="space-y-4">
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">User ID</span><span class="w-2/3"><%= user.id || '118' %></span></div>
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">User Name</span><span class="w-2/3"><%= user.userName %></span></div>
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">Email</span><span class="w-2/3"><%= user.email || '-' %></span></div>
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">Phone</span><span class="w-2/3"><%= user.phone || '-' %></span></div>
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">Status</span><span class="w-2/3"><%= user.status|| '-' %></span></div>
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">Registration Date</span><span class="w-2/3"><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : '2025-01-12 21:05:19' %></span></div>
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">Last Login Date</span><span class="w-2/3"><%= user.lastLoginDate || 'N/A' %></span></div>
+                    <div class="flex border-b py-3"><span class="w-1/3 text-gray-500">User Current login mobile device details</span><span class="w-2/3"><%= user.lastLoginDevice ? user.lastLoginDevice.device : 'N/A' %></span></div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="passwordModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-96">
+            <h2 class="text-xl font-semibold mb-4">Change Password</h2>
+            <form id="passwordForm" action="/api/user/user/update-password/<%= user.id %>" method="POST">
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">New Password</label>
+                    <input type="password" id="newPassword" name="newPassword" class="w-full border p-2 rounded">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="w-full border p-2 rounded">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="closeModalBtn" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('openModalBtn').addEventListener('click', function() {
+            document.getElementById('passwordModal').classList.remove('hidden');
+        });
+
+        document.getElementById('closeModalBtn').addEventListener('click', function() {
+            document.getElementById('passwordModal').classList.add('hidden');
+        });
+
+        document.getElementById('passwordForm').addEventListener('submit', function(event) {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (newPassword !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+            // Allow form submission
+            this.submit();
+            document.getElementById('passwordModal').classList.add('hidden');
+        });
+    </script>
 </body>
 </html>

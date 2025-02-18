@@ -33,8 +33,10 @@ userRouter.get('/logout', logout);
 // User Details Route
 userRouter.get('/user/:id', getUserDetails);
 
-// User Updated by the admin
+// User password Updated by the admin
 userRouter.post('/user/update-password/:userId', updateUserPassword);
 
+// user wallete amount updated by the admin
+// userRouter.post('')
 
 module.exports = userRouter;

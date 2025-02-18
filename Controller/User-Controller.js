@@ -122,8 +122,6 @@ exports.userLogin = async (req, res) => {
     const userOS = os.platform(); // OS information
     const userBrowser = req.headers["user-agent"]; // Browser information (simplified)
 
-
-
     // Set user session and update login details
     req.session.user = {
       id: user._id,
@@ -172,7 +170,7 @@ exports.getDashboard = async (req, res) => {
     const totalUsers = await UserModel.countDocuments();
     const inactiveUsersCount = totalUsers - activeUsersCount;
 
-    res.render("userDashboard", {
+    res.render("userDetails", {
       user,
       activeUsersCount,
       inactiveUsersCount,
@@ -220,18 +218,16 @@ exports.updateUserStatus = async (req, res) => {
   }
 };
 
-  //=>>>>>>>>>>>>>>>>>>>  userpassword is updated by the admin ==>>>>>>>>>>>>>>>>
+//=>>>>>>>>>>>>>>>>>>>  userpassword is updated by the admin ==>>>>>>>>>>>>>>>>
 exports.updateUserPassword = async (req, res) => {
   const { newPassword } = req.body;
   const { userId } = req.params; // Access user ID from the URL parameter
 
   if (!userId || !newPassword) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "User ID and new password are required.",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "User ID and new password are required.",
+    });
   }
 
   try {
@@ -250,7 +246,10 @@ exports.updateUserPassword = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
-    // Redirect to the user details page after successful password update
+    // Set a flash message for successful password update
+    req.flash("success", "Password updated successfully!");
+
+    // Redirect to the user details page
     res.redirect(`/api/user/user/${userId}`);
   } catch (error) {
     console.error(error);
@@ -259,4 +258,3 @@ exports.updateUserPassword = async (req, res) => {
       .json({ success: false, message: "Error updating password." });
   }
 };
-

@@ -1,11 +1,10 @@
-
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    name: {
+    name:{
         type: String,
         required: [true, 'Name is required'],
-        trim: true
+        trim: true,
     },
     userName: {
         type: String,
@@ -52,8 +51,9 @@ const userSchema = new mongoose.Schema({
         os: { type: String },
         browser: { type: String }
     },
-    lastLoginDate: { 
-        type: Date 
+    lastLoginDate: {  
+        type: Date,
+        
     }
 });
 

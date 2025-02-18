@@ -9,7 +9,7 @@ exports.userCreated = [
   ...userValidationRules,
   async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+if (!errors.isEmpty()) {
       req.flash(
         "error",
         errors
@@ -21,12 +21,10 @@ exports.userCreated = [
     }
 
     try {
-      const { name, email, password, phone, userName } = req.body;
+      const {name,email, password, phone, fullName, userName } = req.body;
 
       // Check if user already exists
-      let existingUser = await UserModel.findOne({
-        $or: [{ email }, { userName }],
-      });
+      let existingUser = await UserModel.findOne({email});
 
       if (existingUser) {
         if (existingUser.email === email) {
@@ -43,9 +41,10 @@ exports.userCreated = [
         name,
         userName,
         email,
+        fullName,
         password: hashedPassword,
         phone,
-        fullName: name,
+        
       });
 
       await user.save();
@@ -56,6 +55,7 @@ exports.userCreated = [
       res.redirect("/api/user/login");
     } catch (error) {
       console.error(error);
+      console.error("Error during registration:", error);
       req.flash("error", "Registration failed. Please try again.");
       res.redirect("/api/user");
     }

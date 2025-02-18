@@ -122,10 +122,7 @@ exports.userLogin = async (req, res) => {
     const userOS = os.platform(); // OS information
     const userBrowser = req.headers["user-agent"]; // Browser information (simplified)
 
-    // Log device info for debugging
-    console.log("Device Name:", userdevicename);
-    console.log("Operating System:", userOS);
-    console.log("Browser Info:", userBrowser);
+
 
     // Set user session and update login details
     req.session.user = {
@@ -175,7 +172,7 @@ exports.getDashboard = async (req, res) => {
     const totalUsers = await UserModel.countDocuments();
     const inactiveUsersCount = totalUsers - activeUsersCount;
 
-    res.render("dashboard", {
+    res.render("userDashboard", {
       user,
       activeUsersCount,
       inactiveUsersCount,
@@ -223,7 +220,7 @@ exports.updateUserStatus = async (req, res) => {
   }
 };
 
-// userpassword is updated by the admin ===>>>>>>>>>>>>>>>>
+  //=>>>>>>>>>>>>>>>>>>>  userpassword is updated by the admin ==>>>>>>>>>>>>>>>>
 exports.updateUserPassword = async (req, res) => {
   const { newPassword } = req.body;
   const { userId } = req.params; // Access user ID from the URL parameter

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { handleLogin, logout } = require('../Controller/adminController');
+const { handleLogin, logout, updateWalletBalance } = require('../Controller/adminController');
 const { getAllUsers, updateUserStatus } = require('../Controller/User-Controller');
 
 // Login page
@@ -34,6 +34,9 @@ router.get('/logout', logout);
 
 // Add new route for updating user status
 router.post('/user/update-status', updateUserStatus);
+
+// update wallte amount 
+router.post('/update-wallet/:userId', updateWalletBalance);
 
 
 module.exports = router;

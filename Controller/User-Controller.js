@@ -147,8 +147,8 @@ exports.userLogin = async (req, res) => {
     // Log the updated user data for debugging
     console.log("Updated User:", updatedUser);
 
-    req.flash("success", `Welcome back, ${user.name}!`);
-    return res.redirect("/api/user/dashboard");
+    req.flash("success", `Welcome back, ${user.fullName}!`);
+    return res.redirect("/api/user/login");
   } catch (error) {
     console.error(error);
     req.flash("error", "Something went wrong. Please try again later.");
@@ -219,14 +219,56 @@ exports.updateUserStatus = async (req, res) => {
 };
 
 //=>>>>>>>>>>>>>>>>>>>  userpassword is updated by the admin ==>>>>>>>>>>>>>>>>
+// exports.updateUserPassword = async (req, res) => {
+//   const { newPassword } = req.body;
+//   const { userId } = req.params; // Access user ID from the URL parameter
+
+//   if (!userId || !newPassword) {
+//     return res.status(400).json({
+//       success: false,
+//       message: "User ID and new password are required.",
+//     });
+//   }
+
+//   try {
+//     const hashedPassword = await bcrypt.hash(newPassword, 10); // Hash the new password
+
+//     // Find user and update the password
+//     const user = await UserModel.findByIdAndUpdate(
+//       userId,
+//       { password: hashedPassword },
+//       { new: true }
+//     );
+
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "User not found." });
+//     }
+
+//     // Set a flash message for successful password update
+//     req.flash("success", "Password updated successfully!");
+
+//     // Redirect to the user details page
+//     res.redirect(`/api/user/user/${userId}`);
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .json({ success: false, message: "Error updating password." });
+//   }
+// };
+
+
+// Update password route handler
 exports.updateUserPassword = async (req, res) => {
-  const { newPassword } = req.body;
+  const { newPassword, confirmPassword } = req.body;
   const { userId } = req.params; // Access user ID from the URL parameter
 
-  if (!userId || !newPassword) {
+  if (!userId || !newPassword || newPassword !== confirmPassword) {
     return res.status(400).json({
       success: false,
-      message: "User ID and new password are required.",
+      message: "User ID, new password, and confirmed password are required, and passwords must match.",
     });
   }
 
@@ -258,3 +300,4 @@ exports.updateUserPassword = async (req, res) => {
       .json({ success: false, message: "Error updating password." });
   }
 };
+

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { handleLogin, logout, updateWalletBalance } = require('../Controller/adminController');
-const { getAllUsers, updateUserStatus } = require('../Controller/User-Controller');
+const { getAllUsers, updateUserStatus, getUserDetails } = require('../Controller/User-Controller');
 
 // Login page
 router.get('/login', (req, res) => {
@@ -35,8 +35,12 @@ router.get('/logout', logout);
 // Add new route for updating user status
 router.post('/user/update-status', updateUserStatus);
 
+
+// Route to get user details including wallet balance
+router.get('/user/:userId', getUserDetails);
+
+
 // update wallte amount 
 router.post('/update-wallet/:userId', updateWalletBalance);
-
 
 module.exports = router;

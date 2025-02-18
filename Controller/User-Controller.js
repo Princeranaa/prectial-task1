@@ -47,6 +47,7 @@ if (!errors.isEmpty()) {
       });
 
       await user.save();
+      console.log(user)
       req.flash(
         "success",
         "Account created successfully! Please login to continue."

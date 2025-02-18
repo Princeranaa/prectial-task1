@@ -33,7 +33,7 @@
           <tr class="h-4"></tr> <!-- Added gap between thead and tbody -->
           <% users.forEach(user => { %>
             <tr class="border-t hover:bg-gray-100 transition duration-200 border border-gray-300">
-              <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.fullName %></td>
+              <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.userName %></td>
               <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.email %></td>
               <td class="p-4 text-center border border-gray-300">
                 <a href="/api/user/user/<%= user._id %>" class="text-white bg-blue-500 hover:bg-blue-700 transition duration-300 px-5 py-2 rounded-full shadow-md">View</a>

@@ -21,7 +21,7 @@ if (!errors.isEmpty()) {
     }
 
     try {
-      const {name,email, password, phone, fullName, userName } = req.body;
+      const {email, password, phone, fullName, userName } = req.body;
 
       // Check if user already exists
       let existingUser = await UserModel.findOne({email});
@@ -38,7 +38,6 @@ if (!errors.isEmpty()) {
       // Create new user
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = new UserModel({
-        name,
         userName,
         email,
         fullName,

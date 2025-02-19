@@ -15,14 +15,14 @@ userRouter.post("/register", userCreated);
 
 // Login Routes
 userRouter.get("/login", (req, res) => {
-    res.render("userLogin", { 
-        user: req.session.user || null, 
-        success: req.flash("success"), 
-        error: req.flash("error") 
+    res.render("userLogin", {
+      user: req.session.user || null,
+      success: req.flash("success"),
+      error: req.flash("error"),
     });
-});
-
-userRouter.post("/login", userLogin);
+  });
+  
+  userRouter.post("/login", userLogin);
 
 // userDashboard Route
 userRouter.get('/dashboard', getDashboard);
@@ -34,7 +34,6 @@ userRouter.get('/logout', logout);
 userRouter.get('/user/:id', getUserDetails);
 
 // User password Updated by the admin
-// userRouter.post('/user/update-password/:userId', updateUserPassword);
 userRouter.post('/user/update-password/:userId', updateUserPassword);
 
 

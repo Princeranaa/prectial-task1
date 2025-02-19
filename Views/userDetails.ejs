@@ -11,160 +11,80 @@
 
     <div class="container mx-auto p-6 bg-zinc-300">
         <div class="flex justify-between gap-8">
-            <div class="w-[400px] border border-black">
-                <!-- User Info Section -->
-                <div class="bg-zinc-300 rounded-lg p-6 mb-6">
-                    <div class="flex flex-col items-center">
-                        <div class="w-32 h-32 bg-gray-200 rounded-full mb-4">
-                            <img src="https://images.unsplash.com/photo-1581382575275-97901c2635b7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bWFufGVufDB8fDB8fHww" 
-                                alt="Profile" class="w-full h-full rounded-full object-cover">
-                        </div>
-                        <h2 class="text-xl text-gray-600 mb-4"><%= user.userName || 'Cashuser010' %></h2>
+          <!-- User wallet model Info Section -->
+            <div class="w-[400px] border border-black bg-white rounded-lg shadow-md p-6">
+                <div class="flex flex-col items-center">
+                    <div class="w-32 h-32 bg-gray-200 rounded-full mb-4 overflow-hidden">
+                        <img src="<%= user.photo %>" alt="Profile" class="w-full h-full object-cover">
                     </div>
+                    <h2 class="text-xl text-gray-600 mb-4 font-semibold"><%= user.userName %></h2>
                 </div>
-
-                <div class="bg-zinc-300 rounded-lg p-6 mb-6">
-                    <!-- Wallet Details Section -->
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-wallet text-green-500 text-2xl mr-3"></i>
-                        <h3 class="text-gray-600">Current Wallet Details</h3>
-                    </div>
+                <div class="space-y-3 text-gray-600">
                     <div class="space-y-3 text-gray-600">
-                        <div class="flex items-center">
-                            <span>Total Balance: ₹</span>
-                            <span class="ml-1"><%= user.walletTotalBalance || '600' %></span>
-                        </div>
-                        <div class="flex items-center">
-                            <span>Wallet Amount: ₹</span>
-                            <span class="ml-1"><%= user.walletAmount || '600' %></span>
-                        </div>
-                        <div class="flex items-center">
-                            <span>Winnings Amount: ₹</span>
-                            <span class="ml-1"><%= user.winningsAmount || '0' %></span>
-                        </div>
+                        <p><strong>Wallet Balance:</strong> <%= wallet ? wallet.walletAmount : 0 %> </p>
+                        <p><strong>Total Balance:</strong> <%= wallet ? wallet.walletTotalBalance : 0 %> </p>
+                        <p><strong>Winnings Amount:</strong> <%= wallet ? wallet.winningsAmount : 0 %> </p>
                     </div>
                     
-                    <div class="mt-6 space-y-3">
-                        <button id="openBalanceModalBtn" class="w-full bg-green-400 text-white py-2 rounded hover:bg-green-500">
-                            Update Balance
-                        </button>
-                        <button id="openModalBtn" class="w-full bg-purple-700 text-white py-2 rounded hover:bg-purple-800">
-                            Change Password
-                        </button>
-                    </div>
+                    
                 </div>
-
-                <!-- User Status Section -->
-                <div class="bg-zinc-300 rounded-lg p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-gray-600">Current Status</h3>
-                        <span class="text-green-500"><%= user.status || 'Active' %></span>
-                    </div>
-                    <div class="space-y-4 text-gray-500">
-                        <div>
-                            <div class="text-sm">Registration Date</div>
-                            <div><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : '2025-01-12 21:05:19' %></div>
-                        </div>
-                        <div>
-                            <div class="text-sm">Last Login Date</div>
-                            <div><%= user.lastLoginDate || 'N/A' %></div>
-                        </div>
-                    </div>
+                <div class="mt-4 flex justify-between">
+                    <button onclick="togglePopup('passwordPopup')" class="bg-blue-500 text-white px-4 py-2 rounded">Update Password</button>
+                    <button onclick="togglePopup('balancePopup')" class="bg-green-500 text-white px-4 py-2 rounded">Update Balance</button>
                 </div>
             </div>
-            
-            <!-- Personal Details Section -->
-            <div class="flex-1 bg-zinc-300 rounded-lg p-6">
-                <h3 class="text-xl text-gray-700 mb-6">Personal Details</h3>
+
+            <!-- User Personal Details Section -->
+            <div class="flex-1 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl text-gray-700 mb-6 font-semibold">User Details</h3>
                 <div class="space-y-4">
-                    <div class="flex border-b border-black py-3"><span class="w-1/3 text-zinc-900">User ID</span><span class="w-2/3"><%= user.id || '118' %></span></div>
-                    <div class="flex border-b py-3 border-black"><span class="w-1/3 text-zinc-900">User Name</span><span class="w-2/3"><%= user.userName %></span></div>
-                    <div class="flex border-b py-3 border-black"><span class="w-1/3 text-zinc-900">Email</span><span class="w-2/3"><%= user.email || '-' %></span></div>
-                    <div class="flex border-b py-3 border-black"><span class="w-1/3 text-zinc-900">Phone</span><span class="w-2/3"><%= user.phone || '-' %></span></div>
-                    <div class="flex border-b py-3 border-black"><span class="w-1/3 text-zinc-900">Status</span><span class="w-2/3 text-green-600"><%= user.status || '-' %></span></div>
-                    <div class="flex border-b py-3 border-black"><span class="w-1/3 text-zinc-900">Registration Date</span><span class="w-2/3"><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : '2025-01-12 21:05:19' %></span></div>
-                    <div class="flex border-b py-3 border-black"><span class="w-1/3 text-zinc-900">Last Login Date</span><span class="w-2/3"><%= user.lastLoginDate || 'N/A' %></span></div>
-                    <div class="flex border-b py-3 border-black"><span class="w-1/3 text-zinc-900">User Current login mobile device details</span><span class="w-2/3"><%= user.lastLoginDevice ? user.lastLoginDevice.device : 'N/A' %></span></div>
+                    <div class="flex border-b border-gray-300 py-3"><span class="w-1/3 text-zinc-900">User ID</span><span class="w-2/3"><%= user.id || 'N/A' %></span></div>
+                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">User Name</span><span class="w-2/3"><%= user.userName %></span></div>
+                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Email</span><span class="w-2/3"><%= user.email || '-' %></span></div>
+                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Phone</span><span class="w-2/3"><%= user.phone || '-' %></span></div>
+                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Status</span><span class="w-2/3 text-green-600"><%= user.status || '-' %></span></div>
+                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Registration Date</span><span class="w-2/3"><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A' %></span></div>
+                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Last Login Device</span><span class="w-2/3"><%= user.lastLoginDevice || 'N/A' %></span></div>
+                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Last Login Date</span><span class="w-2/3"><%= user.lastLoginDate || 'N/A' %></span></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Wallet Balance Update Modal -->
-    <div id="balanceModal" class="fixed inset-0 flex justify-center items-start bg-gray-900 bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg p-6 w-96">
-            <h2 class="text-xl font-semibold mb-4">Update Balance</h2>
-            <form id="balanceForm" action="/api/admin/update-wallet/<%= user._id %>" method="POST">
-                <div class="mb-4">
-                    <label class="block text-gray-700">Amount</label>
-                    <input type="number" id="amount" name="amount" class="w-full border p-2 rounded-md" required />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700">Action</label>
-                    <select name="type" class="w-full border p-2 rounded-md">
-                        <option value="add">Add</option>
-                        <option value="subtract">Subtract</option>
-                    </select>
-                    
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button type="button" id="closeBalanceModal" class="px-4 py-2 bg-gray-300 rounded-md">Close</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Submit</button>
+    <!-- Password Update Popup -->
+    <div id="passwordPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-md w-96">
+            <h3 class="text-lg font-semibold mb-4">Update Password</h3>
+            <form method="POST" action="/api/user/user/update-password/<%= user.id %>">
+                <input type="password" name="newPassword" placeholder="New Password" class="w-full p-2 border rounded mb-2" >
+                <input type="password" name="confirmPassword" placeholder="Confirm Password" class="w-full p-2 border rounded mb-4" >
+                <div class="flex justify-between">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+                    <button type="button" onclick="togglePopup('passwordPopup')" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Change Password Modal -->
-    <div id="passwordModal" class="fixed inset-0 flex justify-center items-start bg-gray-900 bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg p-6 w-96">
-            <h2 class="text-xl font-semibold mb-4">Change Password</h2>
-            <form action="/api/user/user/update-password/<%= user._id %>" method="POST">
-                <div class="mb-4">
-                    <label class="block text-gray-700">New Password</label>
-                    <input type="password" name="newPassword" class="w-full border p-2 rounded-md" required />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700">Confirm Password</label>
-                    <input type="password" name="confirmPassword" class="w-full border p-2 rounded-md" required />
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button type="button" id="closeModalBtn" class="px-4 py-2 bg-gray-300 rounded-md">Close</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Submit</button>
+    <!-- Balance Update Popup -->
+    <div id="balancePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-md w-96">
+            <h3 class="text-lg font-semibold mb-4">Update Balance</h3>
+            <form method="POST" action="/api/admin/update-wallet/<%= user.id %>">
+                <input type="number" name="balance" placeholder="Balance by Admin" class="w-full p-2 border rounded mb-2" required>
+                <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4" required>
+                <div class="flex justify-between">
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Submit</button>
+                    <button type="button" onclick="togglePopup('balancePopup')" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
                 </div>
             </form>
-            
         </div>
     </div>
-
 
     <script>
-
-document.querySelector('form').onsubmit = function (e) {
-        const newPassword = document.querySelector('input[name="newPassword"]').value;
-        const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
-        
-        if (newPassword !== confirmPassword) {
-            e.preventDefault();
-            alert('Passwords do not match');
+        function togglePopup(id) {
+            document.getElementById(id).classList.toggle('hidden');
         }
-    };
-
-        document.getElementById("openBalanceModalBtn").onclick = function () {
-            document.getElementById("balanceModal").classList.remove("hidden");
-        };
-        document.getElementById("closeBalanceModal").onclick = function () {
-            document.getElementById("balanceModal").classList.add("hidden");
-        };
-
-        document.getElementById("openModalBtn").onclick = function () {
-            document.getElementById("passwordModal").classList.remove("hidden");
-        };
-
-        document.getElementById("closeModalBtn").onclick = function () {
-            document.getElementById("passwordModal").classList.add("hidden");
-        };
     </script>
-
 </body>
 </html>

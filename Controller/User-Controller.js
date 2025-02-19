@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const userValidationRules = require("../validation/UserValidation");
+const Wallet = require("../model/WalletModel");
+
 const os = require("os");
 
 exports.userCreated = [
@@ -82,6 +84,7 @@ exports.getUserDetails = async (req, res) => {
     }
     res.render("userDetails", {
       user,
+      wallet: {},
       messages: {
         success: req.flash("success"),
         error: req.flash("error"),
@@ -91,7 +94,11 @@ exports.getUserDetails = async (req, res) => {
     req.flash("error", "Error fetching user details");
     res.redirect("/");
   }
+  
+
+
 };
+
 
 exports.userLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -103,58 +110,55 @@ exports.userLogin = async (req, res) => {
 
   try {
     const user = await UserModel.findOne({ email });
+
     if (!user) {
-      req.flash(
-        "error",
-        "You don't have an account. Please create an account."
-      );
+      req.flash("error", "Account not found. Please register first.");
       return res.redirect("/api/user");
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      req.flash("error", "Invalid credentials.");
+      req.flash("error", "Invalid email or password.");
       return res.redirect("/api/user/login");
     }
 
     // Collect device information
-    const userdevicename = os.hostname(); // Device name
-    const userOS = os.platform(); // OS information
-    const userBrowser = req.headers["user-agent"]; // Browser information (simplified)
+    const userDeviceName = os.hostname();
+    const userOS = os.platform();
+    const userBrowser = req.headers["user-agent"];
 
-    // Set user session and update login details
+    // Store user session
     req.session.user = {
       id: user._id,
       email: user.email,
       name: user.name,
-      userdevice: userdevicename,
+      device: userDeviceName,
     };
 
-    // Update last login device details
-    const updatedUser = await UserModel.findByIdAndUpdate(
+    // Update last login details
+    await UserModel.findByIdAndUpdate(
       user._id,
       {
         lastLoginDevice: {
-          device: userdevicename,
+          device: userDeviceName,
           os: userOS,
           browser: userBrowser,
         },
         lastLoginDate: new Date(),
       },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
-    // Log the updated user data for debugging
-    console.log("Updated User:", updatedUser);
-
     req.flash("success", `Welcome back, ${user.fullName}!`);
-    return res.redirect("/api/user/login");
+    return res.redirect("/api/user/login"); // Redirect to user dashboard (change as needed)
+      
   } catch (error) {
-    console.error(error);
-    req.flash("error", "Something went wrong. Please try again later.");
+    console.error("Login Error:", error);
+    req.flash("error", "Something went wrong. Please try again.");
     return res.redirect("/api/user/login");
   }
 };
+
 
 exports.getDashboard = async (req, res) => {
   try {
@@ -170,8 +174,9 @@ exports.getDashboard = async (req, res) => {
     const totalUsers = await UserModel.countDocuments();
     const inactiveUsersCount = totalUsers - activeUsersCount;
 
-    res.render("userDetails", {
+    res.render("userDetails",  {
       user,
+      wallet: {},
       activeUsersCount,
       inactiveUsersCount,
       totalUsers,
@@ -259,7 +264,6 @@ exports.updateUserStatus = async (req, res) => {
 //   }
 // };
 
-
 // Update password route handler
 exports.updateUserPassword = async (req, res) => {
   const { newPassword, confirmPassword } = req.body;
@@ -274,7 +278,6 @@ exports.updateUserPassword = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(newPassword, 10); // Hash the new password
-
     // Find user and update the password
     const user = await UserModel.findByIdAndUpdate(
       userId,
@@ -287,7 +290,6 @@ exports.updateUserPassword = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found." });
     }
-
     // Set a flash message for successful password update
     req.flash("success", "Password updated successfully!");
 

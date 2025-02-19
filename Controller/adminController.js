@@ -46,137 +46,164 @@ exports.getDashboard = async (req, res) => {
     }
 };
 
-// Controller to update wallet balance
-// exports.updateWalletBalance = async (req, res) => {
-//   try {
-//       const { userId } = req.params;
-//       const { walletTotalBalance, walletAmount, winningsAmount } = req.body;
-
-//       // Find the user by userId
-//       const user = await User.findById(userId);
-//       if (!user) {
-//           return res.status(404).send('User not found');
-//       }
-
-//       // Find the wallet for the user, or create one if it doesn't exist
-//       let wallet = await Wallet.findOne({ userId });
-//       if (!wallet) {
-//           wallet = new Wallet({ userId });
-//       }
-
-//       // Update wallet values
-//       if (walletTotalBalance !== undefined) wallet.walletTotalBalance = walletTotalBalance;
-//       if (walletAmount !== undefined) wallet.walletAmount = walletAmount;
-//       if (winningsAmount !== undefined) wallet.winningsAmount = winningsAmount;
-
-//       await wallet.save(); // Save the updated wallet
-
-//       res.redirect(`/admin/user/${userId}`); // Redirect back to the user's profile or any other page
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).send('Internal server error');
-//   }
-// };
-
-
-// exports.updateWalletBalance = async (req, res) => {
-//   try {
-//       const { userId } = req.params;
-//       const { amount } = req.body; // Amount entered by the admin
-//       const numericAmount = parseFloat(amount); // Ensure it's a number
-
-//       if (isNaN(numericAmount)) {
-//           return res.status(400).send('Invalid amount');
-//       }
-
-//       // Find the wallet for the user
-//       let wallet = await Wallet.findOne({ userId });
-
-//       if (!wallet) {
-//           wallet = new Wallet({ userId, walletTotalBalance: 0, walletAmount: 0, winningsAmount: 0 });
-//       }
-
-//       // Update wallet balance (add or subtract)
-//       wallet.walletTotalBalance += numericAmount;
-//       wallet.walletAmount += numericAmount;
-
-//       await wallet.save(); // Save the updated wallet
-
-//       res.redirect(`/admin/user/${userId}`); // Redirect back to the user's profile page
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).send('Internal server error');
-//   }
-// };
-
 
 // Controller to get user details along with wallet balance
-exports.getUserDetails = async (req, res) => {
-    try {
-        const { userId } = req.params;
+// exports.getUserDetailsOfTheWallet = async (req, res) => {
+//     try {
+//         const { userId } = req.params;
 
-        // Find user details
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
+//        const user = await User.findOne({_id : userId});
 
-        // Fetch wallet details for the user
-        const wallet = await Wallet.findOne({ userId }).exec();
+//         if (!user) {
+//             return res.status(404).send('User not found');
+//         }
 
-        // Prepare data for the view, making sure wallet data is passed correctly
-        res.render('userDetails', {
-            user,
-            walletTotalBalance: wallet ? wallet.walletTotalBalance : 0, // Ensure we have wallet data
-            walletAmount: wallet ? wallet.walletAmount : 0,
-            winningsAmount: wallet ? wallet.winningsAmount : 0,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal server error');
-    }
+//         const wallet = await Wallet.find({ userId });
+
+//         if (!wallet) {
+//             wallet = new Wallet({ userId });
+//         }
+
+
+//         // Debugging logs
+//         console.log("User Data:", user);
+//         console.log("--------Wallet Data:", wallet);
+//         // res.status(200).json({"User Data:": user, "Wallet Data:": wallet[0]})
+//         res.render('userDetails', {user, wallet: user});
+//     } catch (error) {
+//         console.error("Error fetching user details:", error);
+//         res.status(500).send('Internal server error');
+//     }
+// };
+
+
+
+
+// exports.updateWalletBalance = async (req, res) => {
+//     try {
+//         const { userId } = req.params;
+//         const { balance, type } = req.body;
+//         //  balance, withdrawAmount 
+//         const numericAmount = parseFloat(balance);
+
+//         let wallet = await Wallet.findOne({ userId });
+
+//         const user= await User.findOne({ user_id: userId});
+
+//         if (!wallet) wallet = new Wallet({ userId });
+
+//         if (wallet.walletAmount === undefined) wallet.walletAmount = 0;
+
+//         if (type === "balance") {
+//             wallet.walletTotalBalance += numericAmount;
+//             wallet.walletAmount += numericAmount;
+//         } else if (type === "withdrawAmount") {
+//             if (wallet.walletAmount < numericAmount) {
+//                 return res.status(400).json({ error: "Insufficient wallet balance" });
+//             }
+//             wallet.walletTotalBalance -= numericAmount;
+//             wallet.walletAmount -= numericAmount;
+//         } else {
+//             return res.status(400).json({ error: "Invalid operation type" });
+//         }
+
+//         await wallet.save();
+        
+//         console.log("Updated Wallet:", wallet);
+        
+//         res.render('userdetails', {user, wallet});
+
+//     } catch (error) {
+//         console.error("Error updating wallet balance:", error);
+//         res.status(500).json({ error: "Internal server error" });
+//     }
+// };
+
+
+
+
+
+exports.getUserDetailsAdminControler  = async (req, res) => {
+    // try {
+    //     const userId = req.params.userId;
+
+    //     // Fetch user details
+    //     const user = await User.findById(userId);
+    //     if (!user) {
+    //         return res.status(404).json({ message: "User not found" });
+    //     }
+
+    //     const wallet = await Wallet.findOne({ userId: user._id }).lean(); // Use .lean() for plain JSON
+    //     console.log("Updated Wallet Data:", wallet);
+    
+
+    //     // If wallet is not found, send default values
+    //     if (!wallet) {
+    //         wallet = {
+    //             walletAmount: 0,
+    //             walletTotalBalance: 0,
+    //             winningsAmount: 0
+    //         };
+    //     }
+
+    //     // Ensure wallet is passed in res.render
+    //     res.render("userDetails", { user, wallet });
+    // } catch (error) {
+    //     console.error("Error fetching user details:", error);
+    //     res.status(500).json({ message: "Server error" });
+    // }
 };
-// Controller to update wallet balance
-exports.updateWalletBalance = async (req, res) => {
+
+
+
+
+exports.adminUpdateWalletBalance = async (req, res) => {
     try {
         const { userId } = req.params;
-        const { amount, type } = req.body; // `type` can be "add" or "subtract"
+        const { balance, withdrawAmount } = req.body;
 
-        console.log(req.body);  // Debugging line to check if data is coming correctly
+        console.log("Received data:", req.body);
 
-        // Validate amount
-        const numericAmount = parseFloat(amount);
-        if (isNaN(numericAmount) || numericAmount <= 0) {
-            return res.status(400).send('Invalid amount');
-        }
+        // Convert balance and withdrawAmount to numbers
+        const balanceAmount = Number(balance) || 0;
+        const withdrawAmountValue = Number(withdrawAmount) || 0;
 
-        // Find wallet or create one if not exists
+        // Find user's wallet
         let wallet = await Wallet.findOne({ userId });
+
         if (!wallet) {
-            wallet = new Wallet({ userId });
+            return res.status(404).json({ message: "Wallet not found" });
         }
 
-        // Update wallet based on type (add/subtract)
-        if (type === 'add') {
-            wallet.walletTotalBalance += numericAmount;
-            wallet.walletAmount += numericAmount;
-        } else if (type === 'subtract') {
-            if (wallet.walletAmount < numericAmount) {
-                return res.status(400).send('Insufficient wallet balance');
-            }
-            wallet.walletTotalBalance -= numericAmount;
-            wallet.walletAmount -= numericAmount;
-        } else {
-            return res.status(400).send('Invalid operation type');
+        console.log("Before update:", wallet);
+
+        // Calculate new balance
+        let newWalletBalance = wallet.walletTotalBalance + balanceAmount - withdrawAmountValue;
+        let newWalletAmount = wallet.walletAmount + balanceAmount - withdrawAmountValue;
+
+        // Ensure values are not negative
+        if (newWalletBalance < 0 || newWalletAmount < 0) {
+            return res.status(400).json({ message: "Insufficient balance" });
         }
 
-        await wallet.save(); // Save updated wallet
+        // Update wallet
+        wallet = await Wallet.findOneAndUpdate(
+            { userId },
+            {
+                $inc: { walletTotalBalance: balanceAmount - withdrawAmountValue },  // Adjusting total balance
+                walletAmount: newWalletAmount, // Directly updating walletAmount
+            },
+            { new: true }
+        );
 
-        res.redirect(`/admin/user/${userId}`); // Redirect back to user details
+        console.log("After update:", wallet);
+
+        return res.son({ message: "Wallet updated successfully", wallet });
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal server error');
+        console.error("Error updating wallet:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
+
 };
 
 

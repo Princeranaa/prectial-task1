@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { handleLogin, logout, updateWalletBalance } = require('../Controller/adminController');
-const { getAllUsers, updateUserStatus, getUserDetails } = require('../Controller/User-Controller');
+const { handleLogin, logout, updateWalletBalance, getUserDetails } = require('../Controller/adminController');
+const { getAllUsers, updateUserStatus } = require('../Controller/User-Controller');
 
 // Login page
 router.get('/login', (req, res) => {

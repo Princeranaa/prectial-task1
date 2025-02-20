@@ -26,7 +26,7 @@
    
 
         <%- include('partials/SideBar') %>
-
+     <!-- Section 1 User Wallet Details  -->
         <div class="main bg-white shadow-md rounded-lg p-6 mb-6 ml-64">
             <div class="flex flex-col lg:flex-row justify-between">
                 <div class="bg-white rounded-lg shadow-lg p-6 w-full lg:max-w-md mb-6 lg:mb-0">
@@ -127,12 +127,12 @@
     </div>
 
     <!-- Balance Update Popup -->
-    <div id="balancePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div id="balancePopup" class="hidden fixed inset-0 bg-black bg-opacity-50  flex justify-center items-start">
         <div class="bg-white p-6 rounded-lg shadow-md w-96">
             <h3 class="text-lg font-semibold mb-4">Update Balance</h3>
             <form method="POST" action="/api/admin/update-wallet/<%= user.id %>">
-                <input type="number" name="balance" placeholder="Balance by Admin" class="w-full p-2 border rounded mb-2" required>
-                <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4" required>
+                <input type="number" name="balance" placeholder="Balance by Admin" class="w-full p-2 border rounded mb-2" >
+                <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4" >
                 <div class="flex justify-between">
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
                     <button type="button" onclick="togglePopup('balancePopup')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
@@ -142,7 +142,7 @@
     </div>
 
     <!-- Password Update Popup -->
-    <div id="passwordPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div id="passwordPopup" class="hidden fixed inset-0 bg-black bg-opacity-50  flex justify-center items-center">
         <div class="bg-white p-6 rounded-lg shadow-md w-96">
             <h3 class="text-lg font-semibold mb-4">Update Password</h3>
             <form method="POST" action="/api/user/update-password/<%= user.id %>">

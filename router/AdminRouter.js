@@ -1,6 +1,6 @@
 const express = require('express');
 const adminRouter = express.Router();
-const { handleLogin, logout,  getAdminUserDetails, adminUpdateWalletBalance, getUserDetailsAdminControler } = require('../Controller/adminController');
+const { handleLogin, logout,  getAdminUserDetails, adminUpdateWalletBalance, getUserDetailsAdminControler, getWalletHistory } = require('../Controller/adminController');
 const { getAllUsers, updateUserStatus, getUserDetails } = require('../Controller/User-Controller');
 
 // Login page
@@ -42,9 +42,9 @@ adminRouter.get('/user/:userId', getUserDetails);
 
 adminRouter.get('/admin/user/:userId', getUserDetailsAdminControler);
 adminRouter.post('/update-wallet/:userId', adminUpdateWalletBalance);
+adminRouter.get('/user/wallet-history/:userId', getWalletHistory);
 
-
-
+// /api/admin/user/wallet-history/:userId
 // update wallte amount 
 // adminRouter.post('/update-wallet/:userId', updateWalletBalance);
 

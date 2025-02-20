@@ -22,6 +22,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
     <div class="container mx-auto p-4">
+        
         <!-- Sidebar -->
    
 
@@ -71,11 +72,11 @@
                 <div class="w-full ml-10">
                     <div class="border-b border-gray-200 mb-4">
                         <ul class="flex flex-wrap space-x-4 text-sm font-medium justify-end">
-                            <li class="text-red-500 border-b-2 border-red-500 pb-2">User  Details</li>
-                            <li class="text-gray-500">Games History Counts</li>
-                            <li class="text-gray-500">Wallet History</li>
-                            <li class="text-gray-500">Game Played List</li>
-                            <li class="text-gray-500">Transactions</li>
+                            <li class="text-red-500 border-b-2 border-red-500 pb-2"><a href="">User  Details</a></li>
+                            <li class="text-gray-500"><a href="">Games History Counts</a></li>
+                            <li class="text-gray-500"><a href="">Wallet History</a></li>
+                            <li class="text-gray-500"><a href="">Game Played List</a></li>
+                            <li class="text-gray-500"><a href="">Transactions</a></li>
                         </ul>
                     </div>
                     <div class="space-y-4">
@@ -127,20 +128,20 @@
     </div>
 
     <!-- Balance Update Popup -->
-    <div id="balancePopup" class="hidden fixed inset-0 bg-black bg-opacity-50  flex justify-center items-start">
+    <div id="balancePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start">
         <div class="bg-white p-6 rounded-lg shadow-md w-96">
             <h3 class="text-lg font-semibold mb-4">Update Balance</h3>
-            <form method="POST" action="/api/admin/update-wallet/<%= user.id %>">
+            <form method="POST" action="/api/admin/update-wallet/<%= user.id %>" onsubmit="disableSubmit()">
                 <input type="number" name="balance" placeholder="Balance by Admin" class="w-full p-2 border rounded mb-2" >
                 <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4" >
                 <div class="flex justify-between">
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
+                    <button id="submitBtn" type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
                     <button type="button" onclick="togglePopup('balancePopup')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
-
+  
     <!-- Password Update Popup -->
     <div id="passwordPopup" class="hidden fixed inset-0 bg-black bg-opacity-50  flex justify-center items-center">
         <div class="bg-white p-6 rounded-lg shadow-md w-96">
@@ -160,6 +161,11 @@
         function togglePopup(id) {
             document.getElementById(id).classList.toggle('hidden');
         }
+
+
+        function disableSubmit() {
+    document.getElementById('submitBtn').disabled = true;
+}
     </script>
 </body>
 </html>

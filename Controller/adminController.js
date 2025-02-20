@@ -354,52 +354,112 @@ exports.getUserDetailsAdminControler = async (req, res) => {
 
     //   ----------------------------getWalletHistory --------------------  //
 
-// exports.getWalletHistory = async (req, res) => {
-//     try {
-//         const userId = req.params.userId; // Get user ID from request params
-//         const page = parseInt(req.query.page) || 1; // Get current page, default to 1
-//         const limit = 10; // Number of transactions per page
-//         const skip = (page - 1) * limit; // Calculate skip value
+exports.getWalletHistory = async (req, res) => {
+    try {
+        const userId = req.params.userId; // Get user ID from request params
+        const page = parseInt(req.query.page) || 1; // Get current page, default to 1
+        const limit = 10; // Number of transactions per page
+        const skip = (page - 1) * limit; // Calculate skip value
         
-//         // Find wallet transactions for the user
-//         const wallet = await Wallet.findOne({ userId });
+        // Find wallet transactions for the user
+        const wallet = await Wallet.findOne({ userId });
+
+        if (!wallet) {
+            return res.status(404).json({ message: 'Wallet not found' });
+        }
+
+        // Ensure transactions exist in the wallet model
+        if (!wallet.transactions) {
+            wallet.transactions = [];
+        }
+
+        // Get paginated transactions
+        const transactions = wallet.transactions
+            .sort((a, b) => b.date - a.date) // Sort by date (latest first)
+            .slice(skip, skip + limit);
+
+        // Calculate total pages
+        const totalTransactions = wallet.transactions.length;
+        const totalPages = Math.ceil(totalTransactions / limit);
+
+        // Render the EJS page with data
+        res.render('wallet-history', { transactions, page, totalPages, userId });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+
+
+
+// ----------------------- Controller function to update wallet balance and store transaction history ----------------- //
+
+
+// Controller function to update wallet balance and store transaction history
+// exports.adminUpdateWalletBalance = async (req, res) => {
+//     try {
+//         const { userId } = req.params;
+//         const { balance, withdrawAmount } = req.body;
+
+//         console.log("Received Data:", req.body);
+
+//         // Convert inputs to numbers
+//         const balanceAmount = Number(balance) || 0;
+//         const withdrawAmountValue = Number(withdrawAmount) || 0;
+
+//         // Find user's wallet
+//         let wallet = await Wallet.findOne({ userId });
 
 //         if (!wallet) {
 //             return res.status(404).json({ message: 'Wallet not found' });
 //         }
 
-//         // Ensure transactions exist in the wallet model
-//         if (!wallet.transactions) {
-//             wallet.transactions = [];
+//         console.log("Before Update Wallet:", wallet);
+
+//         // Fix: Use current balance as the base, do not add on top of already updated balance
+//         let newWalletBalance = wallet.walletTotalBalance + balanceAmount - withdrawAmountValue;
+
+//         // Ensure values are not negative
+//         if (newWalletBalance < 0) {
+//             return res.status(400).json({ message: 'Insufficient balance' });
 //         }
 
-//         // Get paginated transactions
-//         const transactions = wallet.transactions
-//             .sort((a, b) => b.date - a.date) // Sort by date (latest first)
-//             .slice(skip, skip + limit);
+//         // Update wallet balance
+//         wallet.walletTotalBalance = newWalletBalance;
+//         wallet.walletAmount = newWalletBalance;
 
-//         // Calculate total pages
-//         const totalTransactions = wallet.transactions.length;
-//         const totalPages = Math.ceil(totalTransactions / limit);
+//         // Add transaction record
+//         wallet.transactions.push({
+//             amount: balanceAmount,  // Store only the amount admin added
+//             withdrawAmount: withdrawAmountValue,
+//             message: `Updated by Admin`,
+//             date: new Date(),
+//         });
 
-//         // Render the EJS page with data
-//         res.render('wallet-history', { transactions, page, totalPages, userId });
+//         // Save updated wallet
+//         await wallet.save();
+
+//         console.log("After Update Wallet:", wallet);
+
+//         // Fetch updated user details including wallet
+//         const user = await User.findById(userId);
+
+//         // Fix: Ensure fresh data is sent to the frontend
+//         return res.render('userDetails', { user, wallet });
 //     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Server Error' });
+//         console.error('Error updating wallet:', error);
+//         return res.status(500).json({ message: 'Internal server error' });
 //     }
 // };
-
-
-
-
-//----------------------- Controller function to update wallet balance and store transaction history ----------------- //
 exports.adminUpdateWalletBalance = async (req, res) => {
     try {
         const { userId } = req.params;
         const { balance, withdrawAmount } = req.body;
 
-        // Convert balance and withdrawAmount to numbers
+        console.log("Received Data:", req.body);
+
+        // Convert inputs to numbers
         const balanceAmount = Number(balance) || 0;
         const withdrawAmountValue = Number(withdrawAmount) || 0;
 
@@ -410,7 +470,9 @@ exports.adminUpdateWalletBalance = async (req, res) => {
             return res.status(404).json({ message: 'Wallet not found' });
         }
 
-        // Calculate new wallet balance
+        console.log("Before Update Wallet:", wallet);
+
+        // Calculate new balance
         let newWalletBalance = wallet.walletTotalBalance + balanceAmount - withdrawAmountValue;
 
         // Ensure values are not negative
@@ -422,24 +484,21 @@ exports.adminUpdateWalletBalance = async (req, res) => {
         wallet.walletTotalBalance = newWalletBalance;
         wallet.walletAmount = newWalletBalance;
 
-        // Determine transaction type
-        let transactionMessage = balanceAmount > 0 ? 'Amount Added by Admin' : 'Amount Withdrawn by Admin';
-
         // Add transaction record
         wallet.transactions.push({
-            amount: balanceAmount - withdrawAmountValue,
-            message: transactionMessage,
+            amount: balanceAmount,
+            withdrawAmount: withdrawAmountValue,
+            message: `Updated by Admin`,
             date: new Date(),
         });
 
         // Save updated wallet
         await wallet.save();
 
-        // Fetch updated user details including wallet
-        const user = await User.findById(userId);
+        console.log("After Update Wallet:", wallet);
+    
+        return res.redirect(`/api/user/${userId}`)
 
-        // Render user details with updated wallet information
-        return res.render('userDetails', { user, wallet });
     } catch (error) {
         console.error('Error updating wallet:', error);
         return res.status(500).json({ message: 'Internal server error' });

@@ -72,7 +72,7 @@
             <h3 class="text-lg font-semibold mb-4">Update Balance</h3>
             <form method="POST" action="/api/admin/update-wallet/<%= user.id %>">
                 <input type="number" name="balance" placeholder="Balance by Admin" class="w-full p-2 border rounded mb-2" required>
-                <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4" required>
+                <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4">
                 <div class="flex justify-between">
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Submit</button>
                     <button type="button" onclick="togglePopup('balancePopup')" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>

@@ -124,34 +124,34 @@ exports.getDashboard = async (req, res) => {
 
 
 exports.getUserDetailsAdminControler  = async (req, res) => {
-    // try {
-    //     const userId = req.params.userId;
+    try {
+        const userId = req.params.userId;
 
-    //     // Fetch user details
-    //     const user = await User.findById(userId);
-    //     if (!user) {
-    //         return res.status(404).json({ message: "User not found" });
-    //     }
+        // Fetch user details
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-    //     const wallet = await Wallet.findOne({ userId: user._id }).lean(); // Use .lean() for plain JSON
-    //     console.log("Updated Wallet Data:", wallet);
+        const wallet = await Wallet.findOne({ userId: user._id }).lean(); // Use .lean() for plain JSON
+        console.log("Updated Wallet Data:", wallet);
     
 
-    //     // If wallet is not found, send default values
-    //     if (!wallet) {
-    //         wallet = {
-    //             walletAmount: 0,
-    //             walletTotalBalance: 0,
-    //             winningsAmount: 0
-    //         };
-    //     }
+        // If wallet is not found, send default values
+        if (!wallet) {
+            wallet = {
+                walletAmount: 0,
+                walletTotalBalance: 0,
+                winningsAmount: 0
+            };
+        }
 
-    //     // Ensure wallet is passed in res.render
-    //     res.render("userDetails", { user, wallet });
-    // } catch (error) {
-    //     console.error("Error fetching user details:", error);
-    //     res.status(500).json({ message: "Server error" });
-    // }
+        // Ensure wallet is passed in res.render
+        res.render("userDetails", { user, wallet });
+    } catch (error) {
+        console.error("Error fetching user details:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
 
 
@@ -177,12 +177,11 @@ exports.adminUpdateWalletBalance = async (req, res) => {
 
         console.log("Before update:", wallet);
 
-        // Calculate new balance
-        let newWalletBalance = wallet.walletTotalBalance + balanceAmount - withdrawAmountValue;
-        let newWalletAmount = wallet.walletAmount + balanceAmount - withdrawAmountValue;
+        // Set new wallet balance directly
+        let newWalletBalance = balanceAmount - withdrawAmountValue;
 
         // Ensure values are not negative
-        if (newWalletBalance < 0 || newWalletAmount < 0) {
+        if (newWalletBalance < 0) {
             return res.status(400).json({ message: "Insufficient balance" });
         }
 
@@ -190,20 +189,24 @@ exports.adminUpdateWalletBalance = async (req, res) => {
         wallet = await Wallet.findOneAndUpdate(
             { userId },
             {
-                $inc: { walletTotalBalance: balanceAmount - withdrawAmountValue },  // Adjusting total balance
-                walletAmount: newWalletAmount, // Directly updating walletAmount
+                walletTotalBalance: newWalletBalance,
+                walletAmount: newWalletBalance, // Assuming walletAmount should reflect the total balance
             },
             { new: true }
         );
 
+        // Fetch updated user details including wallet
+        const user = await User.findById(userId);
+        const updatedWallet = await Wallet.findOne({ userId });
+
         console.log("After update:", wallet);
 
-        return res.son({ message: "Wallet updated successfully", wallet });
+        // Render user details with updated wallet information
+        return res.render('userDetails', { user, wallet: updatedWallet });
     } catch (error) {
         console.error("Error updating wallet:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
-
 };
 
 

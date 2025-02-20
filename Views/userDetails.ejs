@@ -21,9 +21,13 @@
                 </div>
                 <div class="space-y-3 text-gray-600">
                     <div class="space-y-3 text-gray-600">
-                        <p><strong>Wallet Balance:</strong> <%= wallet ? wallet.walletAmount : 0 %> </p>
-                        <p><strong>Total Balance:</strong> <%= wallet ? wallet.walletTotalBalance : 0 %> </p>
-                        <p><strong>Winnings Amount:</strong> <%= wallet ? wallet.winningsAmount : 0 %> </p>
+                        <% if (wallet && wallet.walletTotalBalance !== undefined) { %>
+                            <p class="card-text text-black "><strong>Total Balance: </strong> <%= wallet.walletTotalBalance %></p>
+                            <p class="card-text text-black"><strong>Current Amount: </strong> <%= wallet.walletAmount %></p>
+                            <p class="card-text text-black"><strong>Winnings Amount: </strong> <%= wallet.winningsAmount %></p>
+                        <% } else { %>
+                            <p>No wallet information found.</p>
+                        <% } %>
                     </div>
                     
                     
@@ -85,6 +89,16 @@
         function togglePopup(id) {
             document.getElementById(id).classList.toggle('hidden');
         }
+        
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+

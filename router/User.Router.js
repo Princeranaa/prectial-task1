@@ -31,7 +31,7 @@ userRouter.get('/dashboard', getDashboard);
 userRouter.get('/logout', logout);
 
 // User Details Route
-userRouter.get('/user/:id', getUserDetails);
+userRouter.get('/:id', getUserDetails);
 
 // User password Updated by the admin
 userRouter.post('/user/update-password/:userId', updateUserPassword);

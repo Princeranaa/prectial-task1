@@ -82,9 +82,13 @@ exports.getUserDetails = async (req, res) => {
       req.flash("error", "User not found");
       return res.redirect("/");
     }
+
+    // Fetch wallet data
+    const wallet = await Wallet.findOne({ userId: user._id }) || {}; // Ensure wallet is fetched
+
     res.render("userDetails", {
       user,
-      wallet: {},
+      wallet, // Pass wallet data to the template
       messages: {
         success: req.flash("success"),
         error: req.flash("error"),
@@ -94,9 +98,6 @@ exports.getUserDetails = async (req, res) => {
     req.flash("error", "Error fetching user details");
     res.redirect("/");
   }
-  
-
-
 };
 
 
@@ -294,7 +295,7 @@ exports.updateUserPassword = async (req, res) => {
     req.flash("success", "Password updated successfully!");
 
     // Redirect to the user details page
-    res.redirect(`/api/user/user/${userId}`);
+    res.redirect(`/api/user/${userId}`);
   } catch (error) {
     console.error(error);
     res

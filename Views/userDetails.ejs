@@ -1,72 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        .main {
+            margin-left: 16rem; /* Adjusted for better spacing */
+        }
+    </style>
 </head>
-<body class="bg-zinc-200">
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-4">
+        <!-- Sidebar -->
+   
 
-    <div class="container mx-auto p-6 bg-zinc-300">
-        <div class="flex justify-between gap-8">
-          <!-- User wallet model Info Section -->
-            <div class="w-[400px] border border-black bg-white rounded-lg shadow-md p-6">
-                <div class="flex flex-col items-center">
-                    <div class="w-32 h-32 bg-gray-200 rounded-full mb-4 overflow-hidden">
-                        <img src="<%= user.photo %>" alt="Profile" class="w-full h-full object-cover">
+        <%- include('partials/SideBar') %>
+
+        <div class="main bg-white shadow-md rounded-lg p-6 mb-6 ml-64">
+            <div class="flex flex-col lg:flex-row justify-between">
+                <div class="bg-white rounded-lg shadow-lg p-6 w-full lg:max-w-md mb-6 lg:mb-0">
+                    <div class="flex flex-col items-center">
+                        <img alt="User  profile picture" class="rounded-full mb-4 border-4 border-gray-200" height="100" src="https://storage.googleapis.com/a1aa/image/CDIqPGYIe3JVvzRtRmBgOYu91MshfgwL1JzzGXF_c0k.jpg" width="100"/>
+                        <h2 class="text-xl font-semibold mb-4">Cashuser010</h2>
                     </div>
-                    <h2 class="text-xl text-gray-600 mb-4 font-semibold"><%= user.userName %></h2>
-                </div>
-                <div class="space-y-3 text-gray-600">
-                    <div class="space-y-3 text-gray-600">
-                        <% if (wallet && wallet.walletTotalBalance !== undefined) { %>
-                            <p class="card-text text-black "><strong>Total Balance: </strong> <%= wallet.walletTotalBalance %></p>
-                            <p class="card-text text-black"><strong>Current Amount: </strong> <%= wallet.walletAmount %></p>
-                            <p class="card-text text-black"><strong>Winnings Amount: </strong> <%= wallet.winningsAmount %></p>
-                        <% } else { %>
-                            <p>No wallet information found.</p>
-                        <% } %>
+                    <div class="border-t border-gray-200 pt-4 w-full">
+                        <h3 class="text-lg font-semibold mb-2">Current Wallet Details</h3>
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-wallet text-green-500 text-2xl mr-2"></i>
+                            <div>
+                                <% if (wallet && wallet.walletTotalBalance !== undefined) { %>
+                                    <p class="text-black"><strong>Total Balance: </strong> <%= wallet.walletTotalBalance %></p>
+                                    <p class="text-black"><strong>Current Amount: </strong> <%= wallet.walletAmount %></p>
+                                    <p class="text-black"><strong>Winnings Amount: </strong> <%= wallet.winningsAmount %></p>
+                                <% } else { %>
+                                    <p>No wallet information found.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
+                            <button onclick="togglePopup('balancePopup')" class="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center justify-center transition duration-300 hover:bg-green-600">
+                                <i class="fas fa-edit mr-2"></i> Update Balance
+                            </button>
+                            <button onclick="togglePopup('passwordPopup')" class="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center justify-center transition duration-300 hover:bg-purple-700">
+                                <i class="fas fa-lock mr-2"></i> Change Password
+                            </button>
+                        </div>
                     </div>
-                    
-                    
+                    <div class="border-t border-gray-200 pt-4 w-full">
+                        <h3 class="text-lg font-semibold mb-2">Current Status</h3>
+                        <p class="text-green-500 font-semibold mb-4">Active</p>
+                        <div class="text-gray-600">
+                            <p>Registration Date</p>
+                            <p class="mb-2">2025-01-12 21:05:19</p>
+                            <p>Last Login Date</p>
+                            <p class="mb-2">2025-01-12 21:05:19</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-4 flex justify-between">
-                    <button onclick="togglePopup('passwordPopup')" class="bg-blue-500 text-white px-4 py-2 rounded">Update Password</button>
-                    <button onclick="togglePopup('balancePopup')" class="bg-green-500 text-white px-4 py-2 rounded">Update Balance</button>
+                <div class="w-full ml-10">
+                    <div class="border-b border-gray-200 mb-4">
+                        <ul class="flex flex-wrap space-x-4 text-sm font-medium justify-end">
+                            <li class="text-red-500 border-b-2 border-red-500 pb-2">User  Details</li>
+                            <li class="text-gray-500">Games History Counts</li>
+                            <li class="text-gray-500">Wallet History</li>
+                            <li class="text-gray-500">Game Played List</li>
+                            <li class="text-gray-500">Transactions</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-4">
+                        <h2 class="text-2xl font-bold mb-4">Personal Details</h2>
+                        <div class="flex justify-between">
+                            <span class="font-medium">User  ID</span>
+                            <span><%= user.id || 'N/A' %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">User  Name</span>
+                            <span><%= user.userName %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Full Name</span>
+                            <span>Cashuser010</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Email</span>
+                            <span><%= user.email || '-' %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Phone</span>
+                            <span><%= user.phone || '-' %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Status</span>
+                            <span class="text-green-500"><%= user.status || '-' %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Registered Date</span>
+                            <span>2025-01-12 21:05:19</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Registered From Device ID</span>
+                            <span><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A' %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Last Login Date</span>
+                            <span><%= user.lastLoginDevice || 'N/A' %></span>
+                        </div>
+                        <div class="mt-8">
+                            <h3 class="text-lg font-bold text-gray-700">User  Current Login Mobile Device Details</h3>
+                            <p class="text-red-500"><%= user.lastLoginDate.device || 'N/A' %></p>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- User Personal Details Section -->
-            <div class="flex-1 bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl text-gray-700 mb-6 font-semibold">User Details</h3>
-                <div class="space-y-4">
-                    <div class="flex border-b border-gray-300 py-3"><span class="w-1/3 text-zinc-900">User ID</span><span class="w-2/3"><%= user.id || 'N/A' %></span></div>
-                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">User Name</span><span class="w-2/3"><%= user.userName %></span></div>
-                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Email</span><span class="w-2/3"><%= user.email || '-' %></span></div>
-                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Phone</span><span class="w-2/3"><%= user.phone || '-' %></span></div>
-                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Status</span><span class="w-2/3 text-green-600"><%= user.status || '-' %></span></div>
-                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Registration Date</span><span class="w-2/3"><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A' %></span></div>
-                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Last Login Device</span><span class="w-2/3"><%= user.lastLoginDevice || 'N/A' %></span></div>
-                    <div class="flex border-b py-3 border-gray-300"><span class="w-1/3 text-zinc-900">Last Login Date</span><span class="w-2/3"><%= user.lastLoginDate || 'N/A' %></span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Password Update Popup -->
-    <div id="passwordPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div class="bg-white p-6 rounded-lg shadow-md w-96">
-            <h3 class="text-lg font-semibold mb-4">Update Password</h3>
-            <form method="POST" action="/api/user/user/update-password/<%= user.id %>">
-                <input type="password" name="newPassword" placeholder="New Password" class="w-full p-2 border rounded mb-2" >
-                <input type="password" name="confirmPassword" placeholder="Confirm Password" class="w-full p-2 border rounded mb-4" >
-                <div class="flex justify-between">
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
-                    <button type="button" onclick="togglePopup('passwordPopup')" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-                </div>
-            </form>
         </div>
     </div>
 
@@ -76,10 +132,25 @@
             <h3 class="text-lg font-semibold mb-4">Update Balance</h3>
             <form method="POST" action="/api/admin/update-wallet/<%= user.id %>">
                 <input type="number" name="balance" placeholder="Balance by Admin" class="w-full p-2 border rounded mb-2" required>
-                <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4">
+                <input type="number" name="withdrawAmount" placeholder="Withdraw Amount" class="w-full p-2 border rounded mb-4" required>
                 <div class="flex justify-between">
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Submit</button>
-                    <button type="button" onclick="togglePopup('balancePopup')" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
+                    <button type="button" onclick="togglePopup('balancePopup')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Update Popup -->
+    <div id="passwordPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-md w-96">
+            <h3 class="text-lg font-semibold mb-4">Update Password</h3>
+            <form method="POST" action="/api/user/update-password/<%= user.id %>">
+                <input type="password" name="newPassword" placeholder="New Password" class="w-full p-2 border rounded mb-2" required>
+                <input type="password" name="confirmPassword" placeholder="Confirm Password" class="w-full p-2 border rounded mb-4" required>
+                <div class="flex justify-between">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Submit</button>
+                    <button type="button" onclick="togglePopup('passwordPopup')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
                 </div>
             </form>
         </div>
@@ -89,16 +160,6 @@
         function togglePopup(id) {
             document.getElementById(id).classList.toggle('hidden');
         }
-        
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-

@@ -34,7 +34,7 @@ userRouter.get('/logout', logout);
 userRouter.get('/:id', getUserDetails);
 
 // User password Updated by the admin
-userRouter.post('/user/update-password/:userId', updateUserPassword);
+userRouter.post('/update-password/:userId', updateUserPassword);
 
 
 

@@ -8,33 +8,15 @@
   </head>
   <body class="bg-gray-100 flex">
     <!-- Sidebar -->
-    <aside class="w-64 bg-gray-900 text-white min-h-screen p-5 space-y-6">
-      <h2 class="text-2xl font-bold text-center">Admin Panel</h2>
-      <nav class="space-y-2">
-        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-700"
-          >🏠 Dashboard</a
-        >
-        <a
-          href="/api/admin/user/list"
-          class="block px-4 py-2 rounded-lg hover:bg-gray-700"
-          >👥 User List</a
-        >
-        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-700"
-          >⚙️ Settings</a
-        >
-        <a
-          href="/api/admin/logout"
-          class="block px-4 py-2 rounded-lg hover:bg-gray-700 text-red-400"
-          >🚪 Logout</a
-        >
-      </nav>
-    </aside>
+  
+
+    <%- include('partials/SideBar') %>
 
     <!-- Main Content -->
     <main class="flex-1 p-6">
       <!-- Header -->
       <header
-        class="flex justify-between items-center p-4 bg-white shadow-md rounded-lg"
+        class="flex justify-between items-center mb-4 p-4 bg-white shadow-md rounded-lg"
       >
         <h1 class="text-2xl font-semibold">Dashboard</h1>
         <div class="flex items-center space-x-4">

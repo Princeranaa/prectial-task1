@@ -1,18 +1,18 @@
 const express = require('express');
-const router = express.Router();
+const adminRouter = express.Router();
 const { handleLogin, logout,  getAdminUserDetails, adminUpdateWalletBalance, getUserDetailsAdminControler } = require('../Controller/adminController');
 const { getAllUsers, updateUserStatus, getUserDetails } = require('../Controller/User-Controller');
 
 // Login page
-router.get('/login', (req, res) => {
+adminRouter.get('/login', (req, res) => {
   res.render("adminLogin");
 });
 
 // Handle login POST request
-router.post('/login', handleLogin);
+adminRouter.post('/login', handleLogin);
 
 // Dashboard page (after login)
-router.get('/dashboard', getAllUsers, (req, res) => {
+adminRouter.get('/dashboard', getAllUsers, (req, res) => {
   res.render("adminDashboard", { 
     totalUser: req.totalUser,
     users: res.locals.users,
@@ -25,31 +25,31 @@ router.get('/dashboard', getAllUsers, (req, res) => {
 });
 
 // User list page (after login)
-router.get('/user/list', getAllUsers, (req, res) => {
+adminRouter.get('/user/list', getAllUsers, (req, res) => {
   res.render("userList", { users: res.locals.users });
 });
 
 // Admin Logout
-router.get('/logout', logout);
+adminRouter.get('/logout', logout);
 
 // Add new route for updating user status
-router.post('/user/update-status', updateUserStatus);
+adminRouter.post('/user/update-status', updateUserStatus);
 
 // // Route to get user details including wallet balance
-router.get('/user/:userId', getUserDetails);
-// router.get('/user/:userId', getUserDetailsOfTheWallet);
+adminRouter.get('/user/:userId', getUserDetails);
+// adminRouter.get('/user/:userId', getUserDetailsOfTheWallet);
 
 
-router.get('/admin/user/:userId', getUserDetailsAdminControler);
-router.post('/update-wallet/:userId', adminUpdateWalletBalance);
+adminRouter.get('/admin/user/:userId', getUserDetailsAdminControler);
+adminRouter.post('/update-wallet/:userId', adminUpdateWalletBalance);
 
 
 
 // update wallte amount 
-// router.post('/update-wallet/:userId', updateWalletBalance);
+// adminRouter.post('/update-wallet/:userId', updateWalletBalance);
 
 
 
 
 
-module.exports = router;
+module.exports = adminRouter;

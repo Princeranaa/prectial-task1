@@ -126,7 +126,6 @@ exports.getWalletHistory = async (req, res) => {
   }
 };
 
-
 exports.adminUpdateWalletBalance = async (req, res) => {
   try {
     const { userId } = req.params;

@@ -3,9 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Wallet Transaction History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function searchTransactions() {
+            let input = document.getElementById("search").value.trim();
+            let rows = document.querySelectorAll("tbody tr");
+            let limit = parseInt(input) || rows.length; // Default to all if input is empty
+            
+            rows.forEach((row, index) => {
+                row.style.display = index < limit ? "" : "none";
+            });
+        }
+    </script>
 </head>
-<body>
-    hello
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6">
+        <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+            <h1 class="text-2xl font-semibold mb-4">Wallet History</h1>
+            
+            <% if (message) { %>
+                <div class="p-3 rounded mb-4 <%= messageType === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' %>">
+                    <%= message %>
+                </div>
+            <% } %>
+
+            <div class="mb-4 flex items-center">
+                <input type="number" id="search" onkeyup="searchTransactions()" placeholder="Enter number of entries..." class="border border-gray-300 p-2 rounded w-full">
+                <button onclick="searchTransactions()" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded">Show</button>
+            </div>
+
+            <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="p-3">Amount Added</th>
+                        <th class="p-3">Amount Withdrawn</th>
+                        <th class="p-3">Message</th>
+                        <th class="p-3">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (transactions.length > 0) { %>
+                        <% transactions.forEach(transaction => { %>
+                            <tr class="border-b">
+                                <td class="p-3 text-green-500 font-bold">
+                                    <% if (transaction.amount && transaction.amount > 0) { %>
+                                        + ₹<%= transaction.amount %>
+                                    <% } else { %>
+                                        -
+                                    <% } %>
+                                </td>
+                                <td class="p-3 text-red-500 font-bold">
+                                    <% if (transaction.withdrawAmount && transaction.withdrawAmount > 0) { %>
+                                        - ₹<%= transaction.withdrawAmount %>
+                                    <% } else { %>
+                                        -
+                                    <% } %>
+                                </td>
+                                <td class="p-3"><%= transaction.message %></td>
+                                <td class="p-3"><%= new Date(transaction.date).toLocaleString() %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" class="p-3 text-center">No transactions found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="mt-4 flex justify-between items-center">
+                <a href="/wallet-history/<%= userId %>?page=<%= page - 1 %>" class="px-4 py-2 bg-blue-500 text-white rounded <%= page <= 1 ? 'hidden' : '' %>">Previous</a>
+                <span>Page <%= page %> of <%= totalPages %></span>
+                <a href="/wallet-history/<%= userId %>?page=<%= page + 1 %>" class="px-4 py-2 bg-blue-500 text-white rounded <%= page >= totalPages ? 'hidden' : '' %>">Next</a>
+            </div>
+
+            <a href="#" class="mt-4 inline-block px-4 py-2 bg-blue-500 text-white rounded">Back to Users</a>
+        </div>
+    </div>
 </body>
 </html>

@@ -8,6 +8,7 @@ const WalletSchema = new mongoose.Schema({
     transactions: [
         {
             amount: Number,
+            withdrawAmount: Number,
             message: String,
             date: { type: Date, default: Date.now }
         }

@@ -74,7 +74,7 @@
                         <ul class="flex flex-wrap space-x-4 text-sm font-medium justify-end">
                             <li class="text-red-500 border-b-2 border-red-500 pb-2"><a href="">User  Details</a></li>
                             <li class="text-gray-500"><a href="">Games History Counts</a></li>
-                            <li class="text-gray-500"><a href="/api/admin/user/wallet-history/<%= user._id %>">Wallet History</a></li>
+                            <li class="text-gray-500"><a href="/api/admin/user/wallet-history/<%= user._id %>" onclick="showContent('walletHistory')" >Wallet History</a></li>
                             <li class="text-gray-500"><a href="">Game Played List</a></li>
                             <li class="text-gray-500"><a href="">Transactions</a></li>
                         </ul>
@@ -163,11 +163,16 @@
         function togglePopup(id) {
             document.getElementById(id).classList.toggle('hidden');
         }
-
-
         function disableSubmit() {
     document.getElementById('submitBtn').disabled = true;
 }
+
+
+
+
+
+
+
     </script>
 </body>
 </html>

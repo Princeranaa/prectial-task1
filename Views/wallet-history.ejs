@@ -21,12 +21,20 @@
     <div class="container mx-auto p-6">
         <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
             <h1 class="text-2xl font-semibold mb-4">Wallet History</h1>
-            
+<!--             
             <% if (message) { %>
                 <div class="p-3 rounded mb-4 <%= messageType === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' %>">
                     <%= message %>
                 </div>
+            <% } %> -->
+
+            <% if (typeof message !== 'undefined' && message) { %>
+                <div class="p-3 rounded mb-4 <%= messageType === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' %>">
+                    <%= message %>
+                </div>
             <% } %>
+            
+
 
             <div class="mb-4 flex items-center">
                 <input type="number" id="search" onkeyup="searchTransactions()" placeholder="Enter number of entries..." class="border border-gray-300 p-2 rounded w-full">

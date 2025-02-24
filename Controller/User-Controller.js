@@ -92,6 +92,7 @@ exports.getUserDetails = async (req, res) => {
       messages: {
         success: req.flash("success"),
         error: req.flash("error"),
+         
       },
     });
   } catch (error) {
@@ -181,6 +182,8 @@ exports.getDashboard = async (req, res) => {
       activeUsersCount,
       inactiveUsersCount,
       totalUsers,
+      message
+      
     });
   } catch (error) {
     console.error(error);

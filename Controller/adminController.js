@@ -71,7 +71,7 @@ exports.getUserDetailsAdminControler = async (req, res) => {
     console.log("Wallet details fetched:", wallet);
 
     // Render userDetails page with user and wallet data
-    res.render("userDetails", { user, wallet });
+    res.render("userDetails", { user, wallet,  });
   } catch (error) {
     console.error("Error fetching user details:", error);
     res.status(500).json({ message: "Server error" });
@@ -79,6 +79,62 @@ exports.getUserDetailsAdminControler = async (req, res) => {
 };
 
 //   ----------------------------getWalletHistory --------------------  //
+
+
+// exports.getUserDetailsAdminControler = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+
+//     // Fetch user details
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Fetch or create wallet
+//     let wallet = await Wallet.findOne({ userId }).lean();
+//     if (!wallet) {
+//       console.log("Wallet not found, creating a new one...");
+//       wallet = new Wallet({
+//         userId: user._id,
+//         walletTotalBalance: 0,
+//         walletAmount: 0,
+//         winningsAmount: 0,
+//         transactions: [],
+//       });
+//       await wallet.save();
+//     }
+
+//     // Fetch transactions (latest 10)
+//     const transactions = wallet.transactions
+//       ? wallet.transactions.sort((a, b) => b.date - a.date).slice(0, 10)
+//       : [];
+
+//     console.log("Wallet details fetched:", wallet);
+
+//     // Render userDetails page with user, wallet, and transactions data
+//     res.render("userDetails", {
+//       user,
+//       wallet,
+//       transactions,
+//       message: null,
+//       messageType: null,
+//       page: 1,
+//       totalPages: Math.ceil(wallet.transactions.length / 10),
+//       userId,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching user details:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
+
+
+
+
+
 
 exports.getWalletHistory = async (req, res) => {
   try {

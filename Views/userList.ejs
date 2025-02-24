@@ -7,36 +7,175 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="flex bg-gray-100 min-h-screen">
+  
   <!-- Sidebar -->
- 
   <%- include('partials/sidebar') %>
 
   <!-- Main Content -->
-  <main class="flex-1 p-8 bg-white shadow-lg rounded-lg m-6">
+  <main class="flex-1 p-8 bg-white shadow-md rounded-lg m-6">
     <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">User List</h2>
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse bg-gray-50 rounded-lg overflow-hidden shadow-lg">
+
+   <!-- Filter Section -->
+   <div class="bg-gray-50 p-4 rounded-lg shadow-md mb-6">
+    <h3 class="text-lg font-semibold text-gray-700 mb-3">Filter Users</h3>
+  
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+      
+      <!-- Date Filter Dropdown -->
+      <div class="flex flex-col">
+        <label for="dateFilter" class="text-sm font-medium text-gray-700">Date Filter:</label>
+        <select id="dateFilter" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Select a filter</option>
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="thisWeek">This Week</option>
+          <option value="lastWeek">Last Week</option>
+          <option value="thisMonth">This Month</option>
+          <option value="lastMonth">Last Month</option>
+          <option value="thisYear">This Year</option>
+          <option value="lastYear">Last Year</option>
+          <option value="custom">Custom Dates</option>
+        </select>
+      </div>
+  
+      <!-- Start Date -->
+      <div class="flex flex-col">
+        <label for="startDate" class="text-sm font-medium text-gray-700">Start Date:</label>
+        <input type="date" id="startDate" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+  
+      <!-- End Date -->
+      <div class="flex flex-col">
+        <label for="endDate" class="text-sm font-medium text-gray-700">End Date:</label>
+        <input type="date" id="endDate" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+  
+      <!-- Status Dropdown -->
+      <div class="flex flex-col">
+        <label for="statusFilter" class="text-sm font-medium text-gray-700">Status:</label>
+        <select id="statusFilter" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">All</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+  
+      <!-- Apply Filter Button -->
+      <div>
+        <button id="applyFilter" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition duration-300 w-full">
+          Apply Filter
+        </button>
+      </div>
+  
+    </div>
+  
+    <!-- Custom Date Fields (Hidden by Default) -->
+    <div id="customDateRange" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div class="flex flex-col">
+        <label for="fromDate" class="text-sm font-medium text-gray-700">From Date:</label>
+        <input type="date" id="fromDate" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div class="flex flex-col">
+        <label for="toDate" class="text-sm font-medium text-gray-700">To Date:</label>
+        <input type="date" id="toDate" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+
+    <!-- User Table -->
+    <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
+      <table class="w-full border-collapse bg-gray-50 rounded-lg">
         <thead>
-          <tr class="bg-gray-300 text-gray-700">
+          <tr class="bg-blue-500 text-white">
             <th class="p-4 text-left font-semibold">Name</th>
             <th class="p-4 text-left font-semibold">Email</th>
-            <!-- <th class="p-4 text-center font-semibold">Action</th> -->
+            <th class="px-6 py-3 text-left">Status</th>
+            <th class="px-6 py-3 text-left">Actions</th>
+            <th class="p-4 text-center font-semibold">View</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="h-4"></tr> <!-- Added gap between thead and tbody -->
-          <% users.forEach(user => { %>
-            <tr class="border-t hover:bg-gray-100 transition duration-200 border border-gray-300">
-              <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.userName %></td>
-              <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.email %></td>
-              <td class="p-4 text-center border border-gray-300">
-                <a href="/api/user/<%= user._id %>" class="text-white bg-blue-500 hover:bg-blue-700 transition duration-300 px-5 py-2 rounded-full shadow-md">View</a>
-              </td>
+          <% if (users.length > 0) { %>
+            <% users.forEach(user => { %>
+              <tr class="border-t hover:bg-gray-100 transition duration-200">
+                <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.userName %></td>
+                <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.email %></td>
+                <td class="px-6 py-4 border border-gray-300">
+                  <span class="px-2 py-1 rounded-full text-sm <%= user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= user.status %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 border border-gray-300">
+                  <button 
+                    onclick="toggleUserStatus('<%= user._id %>', '<%= user.status %>')"
+                    class="px-4 py-2 rounded-lg <%= user.status === 'Active' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600' %> text-white"
+                  >
+                    <%= user.status === 'Active' ? 'Deactivate' : 'Activate' %>
+                  </button>
+                </td>
+                <td class="p-4 text-center border border-gray-300">
+                  <a href="/api/user/<%= user._id %>" class="text-white bg-blue-500 hover:bg-blue-700 transition duration-300 px-4 py-2 rounded-md shadow">
+                    View
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="3" class="p-4 text-center text-gray-600">No users found.</td>
             </tr>
-          <% }) %>
+          <% } %>
         </tbody>
       </table>
     </div>
   </main>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const dateFilter = document.getElementById("dateFilter");
+      const customDateRange = document.getElementById("customDateRange");
+
+      dateFilter.addEventListener("change", function () {
+        if (this.value === "custom") {
+          customDateRange.classList.remove("hidden");
+        } else {
+          customDateRange.classList.add("hidden");
+        }
+      });
+    });
+    
+    async function toggleUserStatus(userId, currentStatus) {
+        try {
+          const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+          const response = await fetch('/api/admin/user/update-status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: userId,
+              status: newStatus
+            })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            // Reload the page to update the stats
+            window.location.reload();
+          } else {
+            alert('Error updating user status');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error updating user status');
+        }
+      }
+  </script>
+
 </body>
 </html>

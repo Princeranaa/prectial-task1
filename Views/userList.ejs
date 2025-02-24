@@ -175,7 +175,25 @@
           alert('Error updating user status');
         }
       }
-  </script>
+      
+      document.getElementById('applyFilter').addEventListener('click', function() {
+    let status = document.getElementById('statusFilter').value;
+    let startDate = document.getElementById('startDate').value;
+    let endDate = document.getElementById('endDate').value;
+  
+    let queryParams = [];
+
+    if (status) {
+      queryParams.push(`status=${status}`);
+    }
+    if (startDate && endDate) {
+      queryParams.push(`startDate=${startDate}&endDate=${endDate}`);
+    }
+
+    let queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+    window.location.href = `/api/admin/user/list${queryString}`;
+});
+</script>
 
 </body>
 </html>

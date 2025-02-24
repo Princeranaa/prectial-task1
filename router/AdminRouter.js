@@ -1,7 +1,7 @@
 const express = require('express');
 const adminRouter = express.Router();
 const { handleLogin, logout,  getAdminUserDetails, adminUpdateWalletBalance, getUserDetailsAdminControler, getWalletHistory } = require('../Controller/adminController');
-const { getAllUsers, updateUserStatus, getUserDetails } = require('../Controller/User-Controller');
+const { getAllUsers, updateUserStatus, getUserDetails, getAdminDashboard } = require('../Controller/User-Controller');
 
 // Login page
 adminRouter.get('/login', (req, res) => {
@@ -12,7 +12,7 @@ adminRouter.get('/login', (req, res) => {
 adminRouter.post('/login', handleLogin);
 
 // Dashboard page (after login)
-adminRouter.get('/dashboard', getAllUsers, (req, res) => {
+adminRouter.get('/dashboard', getAdminDashboard, (req, res) => {
   res.render("adminDashboard", { 
     totalUser: req.totalUser,
     users: res.locals.users,

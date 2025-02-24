@@ -66,14 +66,51 @@ if (!errors.isEmpty()) {
 
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await UserModel.find();
-    req.totalUser = users.length;
-    res.locals.users = users;
-    next();
+    const { status, startDate, endDate } = req.query;
+
+    let filter = {};
+
+    if (status) {
+      filter.status = status === 'active' ? 'Active' : 'Inactive';
+    }
+
+    if (startDate && endDate) {
+      filter.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    const users = await UserModel.find(filter);
+
+    res.render("userList", { users });
   } catch (error) {
-    next(error);
+    console.error(error);
+    req.flash("error", "Error filtering users");
+    res.redirect("/api/admin/user/list");
   }
 };
+
+
+exports.getAdminDashboard = async (req, res, next) => {
+  try {
+    const users = await UserModel.find(); // Fetch all users
+    req.totalUser = users.length;
+    res.locals.users = users;
+    
+    next(); // Continue to render adminDashboard.ejs
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "Error loading admin dashboard");
+    res.redirect("/admin/dashboard");
+  }
+};
+
+
+
+
+
+
 
 exports.getUserDetails = async (req, res) => {
   try {

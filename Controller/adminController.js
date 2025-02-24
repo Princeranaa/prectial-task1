@@ -45,6 +45,8 @@ exports.getDashboard = async (req, res) => {
   }
 };
 
+//   ----------------------------getWalletHistory --------------------  //
+
 exports.getUserDetailsAdminControler = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -71,69 +73,12 @@ exports.getUserDetailsAdminControler = async (req, res) => {
     console.log("Wallet details fetched:", wallet);
 
     // Render userDetails page with user and wallet data
-    res.render("userDetails", { user, wallet,  });
+    res.render("userDetails", { user, wallet });
   } catch (error) {
     console.error("Error fetching user details:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
-//   ----------------------------getWalletHistory --------------------  //
-
-
-// exports.getUserDetailsAdminControler = async (req, res) => {
-//   try {
-//     const userId = req.params.userId;
-
-//     // Fetch user details
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     // Fetch or create wallet
-//     let wallet = await Wallet.findOne({ userId }).lean();
-//     if (!wallet) {
-//       console.log("Wallet not found, creating a new one...");
-//       wallet = new Wallet({
-//         userId: user._id,
-//         walletTotalBalance: 0,
-//         walletAmount: 0,
-//         winningsAmount: 0,
-//         transactions: [],
-//       });
-//       await wallet.save();
-//     }
-
-//     // Fetch transactions (latest 10)
-//     const transactions = wallet.transactions
-//       ? wallet.transactions.sort((a, b) => b.date - a.date).slice(0, 10)
-//       : [];
-
-//     console.log("Wallet details fetched:", wallet);
-
-//     // Render userDetails page with user, wallet, and transactions data
-//     res.render("userDetails", {
-//       user,
-//       wallet,
-//       transactions,
-//       message: null,
-//       messageType: null,
-//       page: 1,
-//       totalPages: Math.ceil(wallet.transactions.length / 10),
-//       userId,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching user details:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
-
-
-
-
-
-
 
 
 exports.getWalletHistory = async (req, res) => {
@@ -148,19 +93,20 @@ exports.getWalletHistory = async (req, res) => {
 
     if (!wallet) {
       return res.status(404).render("walletHistory", {
-                      transactions: [],
-                      message: "No wallet found for this user.",
-                      messageType: "error"
-                  });
+        transactions: [],
+        message: "No wallet found for this user.",
+        messageType: "error",
+      });
     }
-      
+
     // Ensure transactions exist in the wallet model
     if (!wallet.transactions) {
       wallet.transactions = [];
     }
 
     // Get paginated transactions
-    const transactions = wallet.transactions.reverse()
+    const transactions = wallet.transactions
+      .reverse()
       .sort((a, b) => b.date - a.date) // Sort by date (latest first)
       .slice(skip, skip + limit);
 
@@ -219,7 +165,7 @@ exports.adminUpdateWalletBalance = async (req, res) => {
     if (balanceAmount > 0) {
       wallet.transactions.push({
         amount: balanceAmount, // Store added amount
-        withdrawAmount: null,  // Ensure withdrawAmount is null when adding money
+        withdrawAmount: null, // Ensure withdrawAmount is null when adding money
         message: `Added by Admin`,
         date: new Date(),
       });
@@ -227,13 +173,12 @@ exports.adminUpdateWalletBalance = async (req, res) => {
 
     if (withdrawAmountValue > 0) {
       wallet.transactions.push({
-        amount: 0,  // Store 0 instead of null
+        amount: 0, // Store 0 instead of null
         withdrawAmount: withdrawAmountValue, // Store withdrawn amount
         message: `Withdrawn by Admin`,
         date: new Date(),
       });
     }
-    
 
     // Save updated wallet
     await wallet.save();
@@ -247,6 +192,58 @@ exports.adminUpdateWalletBalance = async (req, res) => {
   }
 };
 
+// ----------------CSv file for the download ---------------- //
 
+const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+const path = require("path");
+const fs = require("fs");
 
+exports.exportUsersToCSV = async (req, res) => {
+  try {
+    const userId = req.params.userId; // Get userId from the URL
+    const user = await User.findById(userId); // Fetch only one user
+    console.log("Received userId:", req.params.userId);
 
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    const filePath = path.join(__dirname, "../public/files/users.csv");
+
+    const csvWriter = createCsvWriter({
+      path: filePath,
+      header: [
+        { id: "name", title: "Name" },
+        { id: "userName", title: "Username" },
+        { id: "email", title: "Email" },
+        { id: "phone", title: "Phone" },
+        { id: "status", title: "Status" },
+        { id: "createdAt", title: "Created At" },
+      ],
+    });
+
+    // Convert the user object to an array (because writeRecords expects an array)
+    const formattedUser = [
+      {
+        name: user.name,
+        userName: user.userName,
+        email: user.email,
+        phone: user.phone,
+        status: user.status,
+        createdAt: user.createdAt.toISOString(),
+      },
+    ];
+
+    await csvWriter.writeRecords(formattedUser); // Write data to CSV
+
+    res.download(filePath, `${user.userName}.csv`, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).send("Error downloading the file.");
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error exporting user.");
+  }
+};

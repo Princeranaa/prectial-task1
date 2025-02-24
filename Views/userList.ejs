@@ -87,22 +87,24 @@
 
 
     <!-- User Table -->
-    <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
-      <table class="w-full border-collapse bg-gray-50 rounded-lg">
+    <div class="overflow-x-auto bg-zinc-400 shadow-lg rounded-lg">
+      <table class="w-full border-collapse bg-zinc-400 rounded-lg">
         <thead>
-          <tr class="bg-blue-500 text-white">
+          <tr class="bg-black text-white">
             <th class="p-4 text-left font-semibold">Name</th>
             <th class="p-4 text-left font-semibold">Email</th>
             <th class="px-6 py-3 text-left">Status</th>
             <th class="px-6 py-3 text-left">Actions</th>
             <th class="p-4 text-center font-semibold">View</th>
+            <th class="p-4 text-center font-semibold">Download</th>
+
           </tr>
         </thead>
         <tbody>
           <% if (users.length > 0) { %>
             <% users.forEach(user => { %>
               <tr class="border-t hover:bg-gray-100 transition duration-200">
-                <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.userName %></td>
+                <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.fullName %></td>
                 <td class="p-4 text-gray-900 font-medium border border-gray-300"><%= user.email %></td>
                 <td class="px-6 py-4 border border-gray-300">
                   <span class="px-2 py-1 rounded-full text-sm <%= user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
@@ -118,9 +120,12 @@
                   </button>
                 </td>
                 <td class="p-4 text-center border border-gray-300">
-                  <a href="/api/user/<%= user._id %>" class="text-white bg-blue-500 hover:bg-blue-700 transition duration-300 px-4 py-2 rounded-md shadow">
-                    View
+                  <a href="/api/user/<%= user._id %>" class="text-white bg-blue-700 transition duration-300 px-4 py-2 rounded-md shadow">
+                    View Details
                   </a>
+                </td>
+                <td class="p-4 text-center border border-gray-300">
+                  <a href="/api/admin/export-csv/<%= user._id %>" class="text-white bg-black transition duration-300 px-4 py-2 rounded-md shadow">Download</a>
                 </td>
               </tr>
             <% }) %>
@@ -176,23 +181,125 @@
         }
       }
       
-      document.getElementById('applyFilter').addEventListener('click', function() {
-    let status = document.getElementById('statusFilter').value;
-    let startDate = document.getElementById('startDate').value;
-    let endDate = document.getElementById('endDate').value;
-  
-    let queryParams = [];
+      document.getElementById("applyFilter").addEventListener("click", function () {
+  let status = document.getElementById("statusFilter").value;
+  let dateFilter = document.getElementById("dateFilter").value;
+  let startDate = document.getElementById("startDate").value;
+  let endDate = document.getElementById("endDate").value;
 
-    if (status) {
-      queryParams.push(`status=${status}`);
-    }
-    if (startDate && endDate) {
-      queryParams.push(`startDate=${startDate}&endDate=${endDate}`);
-    }
+  const today = new Date();
 
-    let queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
-    window.location.href = `/api/admin/user/list${queryString}`;
+  // Function to format date as YYYY-MM-DD
+  const formatDate = (date) => date.toISOString().split("T")[0];
+
+  // Generate date ranges
+  const getDateRange = (filter) => {
+    const tempDate = new Date();
+    switch (filter) {
+      case "today":
+        return [today, today];
+      case "yesterday":
+        tempDate.setDate(today.getDate() - 1);
+        return [tempDate, tempDate];
+      case "thisWeek":
+        tempDate.setDate(today.getDate() - today.getDay());
+        return [tempDate, today];
+      case "lastWeek":
+        const firstDayLastWeek = new Date();
+        firstDayLastWeek.setDate(today.getDate() - today.getDay() - 7);
+        const lastDayLastWeek = new Date();
+        lastDayLastWeek.setDate(today.getDate() - today.getDay() - 1);
+        return [firstDayLastWeek, lastDayLastWeek];
+      case "thisMonth":
+        return [new Date(today.getFullYear(), today.getMonth(), 1), today];
+      case "lastMonth":
+        return [
+          new Date(today.getFullYear(), today.getMonth() - 1, 1),
+          new Date(today.getFullYear(), today.getMonth(), 0),
+        ];
+      default:
+        return [startDate, endDate];
+    }
+  };
+
+  if (dateFilter) {
+    [startDate, endDate] = getDateRange(dateFilter).map(formatDate);
+  }
+
+  const queryParams = new URLSearchParams();
+  if (status) queryParams.append("status", status);
+  if (startDate && endDate) {
+    queryParams.append("startDate", startDate);
+    queryParams.append("endDate", endDate);
+  }
+
+  window.location.href = `/api/admin/user/list?${queryParams}`;
 });
+document.getElementById("applyFilter").addEventListener("click", function () {
+  let status = document.getElementById("statusFilter").value;
+  let dateFilter = document.getElementById("dateFilter").value;
+  let startDate = document.getElementById("startDate").value;
+  let endDate = document.getElementById("endDate").value;
+
+  const today = new Date();
+
+  // Function to format date as YYYY-MM-DD HH:MM:SS
+  const formatDate = (date, endOfDay = false) => {
+    if (endOfDay) {
+      date.setHours(23, 59, 59, 999); // End of the day
+    } else {
+      date.setHours(0, 0, 0, 0); // Start of the day
+    }
+    return date.toISOString(); // Use full ISO format to include time
+  };
+
+  // Generate date ranges
+  const getDateRange = (filter) => {
+    const tempDate = new Date();
+    switch (filter) {
+      case "today":
+        return [formatDate(today), formatDate(today, true)];
+      case "yesterday":
+        tempDate.setDate(today.getDate() - 1);
+        return [formatDate(tempDate), formatDate(tempDate, true)];
+      case "thisWeek":
+        tempDate.setDate(today.getDate() - today.getDay());
+        return [formatDate(tempDate), formatDate(today, true)];
+      case "lastWeek":
+        const firstDayLastWeek = new Date();
+        firstDayLastWeek.setDate(today.getDate() - today.getDay() - 7);
+        const lastDayLastWeek = new Date();
+        lastDayLastWeek.setDate(today.getDate() - today.getDay() - 1);
+        return [formatDate(firstDayLastWeek), formatDate(lastDayLastWeek, true)];
+      case "thisMonth":
+        return [
+          formatDate(new Date(today.getFullYear(), today.getMonth(), 1)),
+          formatDate(today, true),
+        ];
+      case "lastMonth":
+        return [
+          formatDate(new Date(today.getFullYear(), today.getMonth() - 1, 1)),
+          formatDate(new Date(today.getFullYear(), today.getMonth(), 0), true),
+        ];
+      default:
+        return [startDate, endDate]; // Use manual input
+    }
+  };
+
+  if (dateFilter) {
+    [startDate, endDate] = getDateRange(dateFilter);
+  }
+
+  const queryParams = new URLSearchParams();
+  if (status) queryParams.append("status", status);
+  if (startDate && endDate) {
+    queryParams.append("startDate", startDate);
+    queryParams.append("endDate", endDate);
+  }
+
+  window.location.href = `/api/admin/user/list?${queryParams}`;
+});
+
 </script>
 
 </body>

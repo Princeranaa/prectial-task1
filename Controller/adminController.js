@@ -1,5 +1,11 @@
 const User = require("../model/UserModel");
 const Wallet = require("../model/WalletModel");
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+
+const { Parser } = require("json2csv");
+
+const path = require("path");
+const fs = require("fs");
 
 // Assuming you have a session store or similar for session management
 const adminEmail = "admin@example.com";
@@ -67,7 +73,7 @@ exports.getUserDetailsAdminControler = async (req, res) => {
         walletAmount: 0,
         winningsAmount: 0,
       });
-      await wallet.save();
+      await wallet.save(); // Ensure the wallet is saved
     }
 
     console.log("Wallet details fetched:", wallet);
@@ -79,7 +85,6 @@ exports.getUserDetailsAdminControler = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 exports.getWalletHistory = async (req, res) => {
   try {
@@ -192,58 +197,53 @@ exports.adminUpdateWalletBalance = async (req, res) => {
   }
 };
 
-// ----------------CSv file for the download ---------------- //
+// ---------------- CSv file for the download ---------------- //
 
-const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-const path = require("path");
-const fs = require("fs");
+
+
+
 
 exports.exportUsersToCSV = async (req, res) => {
   try {
-    const userId = req.params.userId; // Get userId from the URL
-    const user = await User.findById(userId); // Fetch only one user
-    console.log("Received userId:", req.params.userId);
+    let { status, startDate, endDate } = req.query;
+    let filter = {};
 
-    if (!user) {
-      return res.status(404).send("User not found.");
+    console.log("Received Query Parameters:", req.query); // Debugging step
+
+    // Ensure status is correctly applied
+    if (status && (status.toLowerCase() === "active" || status.toLowerCase() === "inactive")) {
+      filter.status = status.toLowerCase() === "active" ? "Active" : "Inactive";
+ // Ensure consistent capitalization
     }
 
-    const filePath = path.join(__dirname, "../public/files/users.csv");
+    // Ensure date range filter is correctly applied
+    if (startDate && endDate) {
+      filter.createdAt = { 
+        $gte: new Date(startDate + "T00:00:00.000Z"), 
+        $lte: new Date(endDate + "T23:59:59.999Z") 
+      };
+    }
 
-    const csvWriter = createCsvWriter({
-      path: filePath,
-      header: [
-        { id: "name", title: "Name" },
-        { id: "userName", title: "Username" },
-        { id: "email", title: "Email" },
-        { id: "phone", title: "Phone" },
-        { id: "status", title: "Status" },
-        { id: "createdAt", title: "Created At" },
-      ],
-    });
+    console.log("Final Filter Applied:", filter); // Debugging step
 
-    // Convert the user object to an array (because writeRecords expects an array)
-    const formattedUser = [
-      {
-        name: user.name,
-        userName: user.userName,
-        email: user.email,
-        phone: user.phone,
-        status: user.status,
-        createdAt: user.createdAt.toISOString(),
-      },
-    ];
+    // Fetch users with applied filters
+    const users = await User.find(filter).select("fullName email status createdAt");
 
-    await csvWriter.writeRecords(formattedUser); // Write data to CSV
+    if (!users.length) {
+      return res.status(404).send("No users found for the applied filters.");
+    }
 
-    res.download(filePath, `${user.userName}.csv`, (err) => {
-      if (err) {
-        console.error("Error downloading file:", err);
-        res.status(500).send("Error downloading the file.");
-      }
-    });
+    // Define CSV fields
+    const fields = ["fullName", "email", "status", "createdAt"];
+    const parser = new Parser({ fields });
+    const csv = parser.parse(users);
+
+    // Set response headers and send CSV file
+    res.header("Content-Type", "text/csv");
+    res.attachment("users.csv");
+    res.send(csv);
   } catch (error) {
-    console.log(error);
-    res.status(500).send("Error exporting user.");
+    console.error("Error exporting CSV:", error);
+    res.status(500).send("Internal Server Error");
   }
 };

@@ -14,6 +14,16 @@
   <!-- Main Content -->
   <main class="flex-1 p-8 bg-white shadow-md rounded-lg m-6">
     <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">User List</h2>
+    
+
+    <div class="flex justify-end">
+      
+      <div class="bg-green-600 rounded text-white font-semibold p-2">
+        <a id="exportCsvBtn" href="#" class="btn btn-primary">Export CSV</a>
+      </div>
+
+    </div>
+
 
    <!-- Filter Section -->
    <div class="bg-gray-50 p-4 rounded-lg shadow-md mb-6">
@@ -23,9 +33,9 @@
       
       <!-- Date Filter Dropdown -->
       <div class="flex flex-col">
-        <label for="dateFilter" class="text-sm font-medium text-gray-700">Date Filter:</label>
+        <label for="dateFilter" class="text-sm font-medium text-gray-700">Time range</label>
         <select id="dateFilter" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="">Select a filter</option>
+          <option value="">All time</option>
           <option value="today">Today</option>
           <option value="yesterday">Yesterday</option>
           <option value="thisWeek">This Week</option>
@@ -96,7 +106,7 @@
             <th class="px-6 py-3 text-left">Status</th>
             <th class="px-6 py-3 text-left">Actions</th>
             <th class="p-4 text-center font-semibold">View</th>
-            <th class="p-4 text-center font-semibold">Download</th>
+            <!-- <th class="p-4 text-center font-semibold">Download</th> -->
 
           </tr>
         </thead>
@@ -124,9 +134,6 @@
                     View Details
                   </a>
                 </td>
-                <td class="p-4 text-center border border-gray-300">
-                  <a href="/api/admin/export-csv/<%= user._id %>" class="text-white bg-black transition duration-300 px-4 py-2 rounded-md shadow">Download</a>
-                </td>
               </tr>
             <% }) %>
           <% } else { %>
@@ -137,170 +144,26 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination Controls -->
+    <div class="flex justify-center mt-4">
+      <div class="flex space-x-2">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <a href="/api/admin/user/list?page=<%= i %>&status=<%= filter.status %>&startDate=<%= filter.startDate %>&endDate=<%= filter.endDate %>" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md <%= currentPage === i ? 'opacity-50 cursor-not-allowed' : '' %>">
+            <%= i %>
+          </a>
+        <% } %>
+      </div>
+    </div>
   </main>
 
-  <!-- JavaScript -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const dateFilter = document.getElementById("dateFilter");
-      const customDateRange = document.getElementById("customDateRange");
 
-      dateFilter.addEventListener("change", function () {
-        if (this.value === "custom") {
-          customDateRange.classList.remove("hidden");
-        } else {
-          customDateRange.classList.add("hidden");
-        }
-      });
-    });
-    
-    async function toggleUserStatus(userId, currentStatus) {
-        try {
-          const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-          const response = await fetch('/api/admin/user/update-status', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId: userId,
-              status: newStatus
-            })
-          });
-
-          const data = await response.json();
-          if (data.success) {
-            // Reload the page to update the stats
-            window.location.reload();
-          } else {
-            alert('Error updating user status');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('Error updating user status');
-        }
-      }
-      
-      document.getElementById("applyFilter").addEventListener("click", function () {
-  let status = document.getElementById("statusFilter").value;
-  let dateFilter = document.getElementById("dateFilter").value;
-  let startDate = document.getElementById("startDate").value;
-  let endDate = document.getElementById("endDate").value;
-
-  const today = new Date();
-
-  // Function to format date as YYYY-MM-DD
-  const formatDate = (date) => date.toISOString().split("T")[0];
-
-  // Generate date ranges
-  const getDateRange = (filter) => {
-    const tempDate = new Date();
-    switch (filter) {
-      case "today":
-        return [today, today];
-      case "yesterday":
-        tempDate.setDate(today.getDate() - 1);
-        return [tempDate, tempDate];
-      case "thisWeek":
-        tempDate.setDate(today.getDate() - today.getDay());
-        return [tempDate, today];
-      case "lastWeek":
-        const firstDayLastWeek = new Date();
-        firstDayLastWeek.setDate(today.getDate() - today.getDay() - 7);
-        const lastDayLastWeek = new Date();
-        lastDayLastWeek.setDate(today.getDate() - today.getDay() - 1);
-        return [firstDayLastWeek, lastDayLastWeek];
-      case "thisMonth":
-        return [new Date(today.getFullYear(), today.getMonth(), 1), today];
-      case "lastMonth":
-        return [
-          new Date(today.getFullYear(), today.getMonth() - 1, 1),
-          new Date(today.getFullYear(), today.getMonth(), 0),
-        ];
-      default:
-        return [startDate, endDate];
-    }
-  };
-
-  if (dateFilter) {
-    [startDate, endDate] = getDateRange(dateFilter).map(formatDate);
-  }
-
-  const queryParams = new URLSearchParams();
-  if (status) queryParams.append("status", status);
-  if (startDate && endDate) {
-    queryParams.append("startDate", startDate);
-    queryParams.append("endDate", endDate);
-  }
-
-  window.location.href = `/api/admin/user/list?${queryParams}`;
-});
-document.getElementById("applyFilter").addEventListener("click", function () {
-  let status = document.getElementById("statusFilter").value;
-  let dateFilter = document.getElementById("dateFilter").value;
-  let startDate = document.getElementById("startDate").value;
-  let endDate = document.getElementById("endDate").value;
-
-  const today = new Date();
-
-  // Function to format date as YYYY-MM-DD HH:MM:SS
-  const formatDate = (date, endOfDay = false) => {
-    if (endOfDay) {
-      date.setHours(23, 59, 59, 999); // End of the day
-    } else {
-      date.setHours(0, 0, 0, 0); // Start of the day
-    }
-    return date.toISOString(); // Use full ISO format to include time
-  };
-
-  // Generate date ranges
-  const getDateRange = (filter) => {
-    const tempDate = new Date();
-    switch (filter) {
-      case "today":
-        return [formatDate(today), formatDate(today, true)];
-      case "yesterday":
-        tempDate.setDate(today.getDate() - 1);
-        return [formatDate(tempDate), formatDate(tempDate, true)];
-      case "thisWeek":
-        tempDate.setDate(today.getDate() - today.getDay());
-        return [formatDate(tempDate), formatDate(today, true)];
-      case "lastWeek":
-        const firstDayLastWeek = new Date();
-        firstDayLastWeek.setDate(today.getDate() - today.getDay() - 7);
-        const lastDayLastWeek = new Date();
-        lastDayLastWeek.setDate(today.getDate() - today.getDay() - 1);
-        return [formatDate(firstDayLastWeek), formatDate(lastDayLastWeek, true)];
-      case "thisMonth":
-        return [
-          formatDate(new Date(today.getFullYear(), today.getMonth(), 1)),
-          formatDate(today, true),
-        ];
-      case "lastMonth":
-        return [
-          formatDate(new Date(today.getFullYear(), today.getMonth() - 1, 1)),
-          formatDate(new Date(today.getFullYear(), today.getMonth(), 0), true),
-        ];
-      default:
-        return [startDate, endDate]; // Use manual input
-    }
-  };
-
-  if (dateFilter) {
-    [startDate, endDate] = getDateRange(dateFilter);
-  }
-
-  const queryParams = new URLSearchParams();
-  if (status) queryParams.append("status", status);
-  if (startDate && endDate) {
-    queryParams.append("startDate", startDate);
-    queryParams.append("endDate", endDate);
-  }
-
-  window.location.href = `/api/admin/user/list?${queryParams}`;
-});
-
-</script>
+<script src="/javaScript/userList.js"></script>
 
 </body>
 </html>
+
+
+
+
+

@@ -44,7 +44,7 @@ adminRouter.get('/admin/user/:userId', getUserDetailsAdminControler);
 adminRouter.post('/update-wallet/:userId', adminUpdateWalletBalance);
 adminRouter.get('/user/wallet-history/:userId', getWalletHistory);
 
-adminRouter.get('/export-csv/:userId', exportUsersToCSV);
+adminRouter.get('/export-csv', exportUsersToCSV);
 
 
 

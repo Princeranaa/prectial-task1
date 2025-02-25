@@ -49,6 +49,16 @@ if (!errors.isEmpty()) {
       });
 
       await user.save();
+
+      // Create wallet for the new user
+      const wallet = new Wallet({
+        userId: user._id,
+        walletTotalBalance: 0,
+        walletAmount: 0,
+        winningsAmount: 0,
+      });
+      await wallet.save(); // Save the wallet
+
       console.log(user)
       req.flash(
         "success",
@@ -64,9 +74,38 @@ if (!errors.isEmpty()) {
   },
 ];
 
+// exports.getAllUsers = async (req, res, next) => {
+//   try {
+//     const { status, startDate, endDate } = req.query;
+
+//     let filter = {};
+
+//     if (status) {
+//       filter.status = status === 'active' ? 'Active' : 'Inactive';
+//     }
+
+//     if (startDate && endDate) {
+//       filter.createdAt = {
+//         $gte: new Date(startDate), // Start of the day
+//         $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) // End of the day
+//       };
+//     }
+
+//     const users = await UserModel.find(filter);
+
+//     res.render("userList", { users, filter }); // Pass filter to the view
+//   } catch (error) {
+//     console.error(error);
+//     req.flash("error", "Error filtering users");
+//     res.redirect("/api/admin/user/list");
+//   }
+// };
+
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const { status, startDate, endDate } = req.query;
+    const { status, startDate, endDate, page = 1 } = req.query;
+    const limit = 10; // Number of users per page
+    const skip = (page - 1) * limit;
 
     let filter = {};
 
@@ -76,17 +115,26 @@ exports.getAllUsers = async (req, res, next) => {
 
     if (startDate && endDate) {
       filter.createdAt = {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate),
+        $gte: new Date(startDate), 
+        $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999))
       };
     }
 
-    const users = await UserModel.find(filter);
+    // Get total users count (for pagination)
+    const totalUsers = await UserModel.countDocuments(filter);
 
-    res.render("userList", { users });
+    // Get paginated users
+    const users = await UserModel.find(filter).skip(skip).limit(limit);
+
+    res.render("userList", {
+      users,
+      filter,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalUsers / limit)
+    });
   } catch (error) {
     console.error(error);
-    req.flash("error", "Error filtering users");
+    req.flash("error", "Error fetching users");
     res.redirect("/api/admin/user/list");
   }
 };
@@ -105,10 +153,6 @@ exports.getAdminDashboard = async (req, res, next) => {
     res.redirect("/admin/dashboard");
   }
 };
-
-
-
-
 
 
 
